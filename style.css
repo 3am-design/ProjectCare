@@ -1,0 +1,606 @@
+/* =================================================================
+   Project Care — Homepage
+   Fixed 1920px desktop canvas. Each section's .sec__inner is the
+   container-query context, capped at max-width 1920px and centred;
+   elements are placed in % of that canvas and sized in cqw (1cqw = 1%
+   of the canvas) so the layout scales as one unit below 1920px and
+   freezes at 1920px (only the section background colour then extends).
+   Display typography + numbers = Playfair Display (live web font, on the
+   grid for alignment). Chinese headings/labels = Noto Serif HK. Body
+   text = Inter.
+   ================================================================= */
+
+:root{
+  --navy:#0b142f;
+  --orange:#f14b05;
+  --brand:#ff6200;
+  --blue:#3192ed;
+  --cream:#faf3ed;
+  --ink-soft:rgba(11,20,47,.55);
+
+  /* ---- RESPONSIVE GRID STANDARD ----
+     5 tiers. --margin / --gutter are % of the section canvas so the grid
+     and every element placed on it stay aligned as the canvas scales
+     within a tier; --cols drives the column-guide overlay (press "G").
+       XL  >=1920   12col  margin 204px(10.625%)  gutter 25px(1.302%)
+       L   1440-1919 12col  margin 10.625%          gutter 1.302%
+       M   1024-1439  8col  margin  6.25%           gutter 1.667%
+       S    768-1023  6col  margin  6.25%           gutter 2.083%
+       XS    <=767    4col  margin 20px             gutter 15px  (flow) */
+  --cols:12;
+  --margin:10.625%;
+  --gutter:1.302%;
+}
+@media (max-width:1439px){ :root{ --cols:8; --margin:6.25%; --gutter:1.667%; } }
+@media (max-width:1023px){ :root{ --cols:6; --margin:6.25%; --gutter:2.083%; } }
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{ -webkit-text-size-adjust:100%; }
+body{ background:var(--cream); color:var(--navy); font-family:"Inter",system-ui,sans-serif; }
+
+/* The design is a fixed 1920px canvas. The layout itself is capped at
+   1920px (.sec__inner) and centered, so it never upscales / zooms past
+   1920px — at >1920 only the section background colour extends to fill
+   the viewport. Below 1920px the canvas scales down proportionally
+   (1cqw = 1% of the capped canvas), preserving the 1920 grid
+   (204px margins = 10.625%, 25px gutter). */
+.stage{
+  position:relative; width:100%;
+  background:var(--cream); overflow:hidden;
+}
+
+/* ---- sections : full-bleed background colour, centred 1920 canvas ---- */
+.sec{ position:relative; width:100%; overflow:hidden; }
+/* the capped, centred canvas that owns the container-query context.
+   aspect-ratio reproduces the Figma frame heights and, once width hits
+   1920px, the height is frozen too. */
+.sec__inner{
+  position:relative; width:100%; max-width:1920px; margin:0 auto;
+  container-type:inline-size; overflow:hidden;
+}
+.sec--landing { background:var(--cream); }
+.sec--services{ background:#fff; }
+.sec--support { background:var(--blue); }
+.sec--footer  { background:#fff; }
+.sec--landing  .sec__inner{ aspect-ratio:1920 / 2254; }
+.sec--services .sec__inner{ aspect-ratio:1920 / 1600; }
+.sec--support  .sec__inner{ aspect-ratio:1920 / 842;  }
+.sec--footer   .sec__inner{ aspect-ratio:1920 / 315;  }
+
+/* ---- positioned primitives ---- */
+.t{ position:absolute; line-height:1; color:var(--navy); z-index:3; }
+.img{ position:absolute; display:block; z-index:1; }
+img.img{ height:auto; }
+.i-star1,.i-star2{ z-index:3; }   /* sparkles sit above the hero hand */
+a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
+.photo{ object-fit:cover; border-radius:1.55cqw; }
+
+/* ---- type roles ---- */
+.num{ font-family:"Playfair Display",serif; font-weight:700; letter-spacing:.01em; white-space:nowrap; }
+.ming{ font-family:"Noto Serif HK",serif; font-weight:500; letter-spacing:.1em; white-space:nowrap; }
+.sans{ font-family:"Inter",sans-serif; font-weight:400; line-height:1.667; white-space:normal; }
+.on-blue{ color:#fff; }
+.lnk.on-blue{ color:#fff; }   /* keep arrow-links white on the blue support section */
+
+/* arrow-link Chinese tracking is looser in the design */
+.lnk.ming{ letter-spacing:.03em; }
+
+/* ---- display typography (Playfair Display web font, replaces typo-*.svg) ---- */
+.disp{ position:absolute; font-family:"Playfair Display",serif; font-weight:600;
+  line-height:1.33; color:var(--navy); white-space:nowrap; z-index:3; }
+.disp.on-blue{ color:#fff; }
+
+/* "+" on the 68,000 stat — sits at the number's tail, raised */
+.num .plus{ font-size:.6em; vertical-align:.55em; font-weight:700; margin-left:.04em; }
+
+/* "×" connector between two tags — same ink as the text */
+.tag-x::after{ content:"×"; color:currentColor; margin:0 .55em; font-weight:400; }
+
+/* ---- arrow link ---- */
+.lnk{ display:inline-flex; align-items:center; gap:.6em; text-decoration:none; color:inherit; white-space:nowrap; }
+.lnk .arr{ position:relative; display:inline-block; width:2.1em; height:1px; background:currentColor; }
+.lnk .arr::after{ content:""; position:absolute; right:0; top:-3px; width:6px; height:6px; border-top:1px solid currentColor; border-right:1px solid currentColor; transform:rotate(45deg); }
+.lnk:hover .arr{ width:2.7em; transition:width .25s ease; }
+
+/* ---- divider + label line ---- */
+.div-line{ position:absolute; height:1px; background:rgba(11,20,47,.22); z-index:3; }
+/* section title: text on top, short centred line underneath */
+.label-line{ display:inline-flex; flex-direction:column; align-items:center; }
+.label-line::after{ content:""; width:100%; height:1px; background:currentColor; margin-top:.6em; opacity:.85; }
+
+/* ---- paper texture overlay (Figma "filter mask") ---- */
+.paper::after{
+  content:""; position:absolute; inset:0; z-index:5; pointer-events:none;
+  opacity:.14; mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+}
+
+/* =================================================================
+   NAV
+   ================================================================= */
+.nav{ position:absolute; top:0; left:0; right:0; z-index:50; display:flex; justify-content:center; }
+.nav__inner{ width:100%; max-width:1920px; container-type:inline-size; display:flex; align-items:center; padding:1.15cqw 10.625% 0; }
+.nav__logo img{ height:4.27cqw; }
+.nav__menu{ display:flex; gap:2.083cqw; margin-left:2.8cqw; }
+.nav__menu a{ font:500 .9375cqw/1 "Noto Sans HK","Inter",sans-serif; letter-spacing:.07em; color:var(--navy); text-decoration:none; }
+.nav__menu a:hover{ color:var(--orange); }
+.nav__right{ margin-left:auto; display:flex; align-items:center; gap:1.4cqw; }
+.nav__partners{ display:flex; align-items:center; gap:1cqw; }
+.nav__partner{ height:1.95cqw; }
+.nav__partner-pair{ display:flex; align-items:center; gap:.45cqw; }
+.nav__partner-pair img{ height:2.05cqw; }
+.nav__partner-txt{ font:500 .57cqw/1.18 "Inter"; color:var(--navy); text-transform:uppercase; letter-spacing:.02em; }
+.nav__cta{ display:inline-flex; align-items:center; justify-content:center;
+  width:6.875cqw; height:2.708cqw;                 /* 132 × 52px */
+  font:500 .9375cqw/1 "Noto Sans HK","Inter",sans-serif; letter-spacing:.07em;
+  color:var(--navy); text-decoration:none; background:#fff;
+  border-radius:2em; transition:.2s; }
+.nav__cta:hover{ background:var(--navy); color:#fff; }
+
+/* =================================================================
+   LANDING / HERO   (1920 x 2254)
+   ================================================================= */
+/* display words — Playfair Display, placed + sized on the 1920 grid (px/19.2 = cqw) */
+.e-wecare   {left:10.885%;top:13.887%;font-size:11.458cqw;font-weight:600;line-height:1.332;}
+.e-wl-we    {left:44.167%;top:67.169%;font-size:9.375cqw;font-weight:700;line-height:1.388;}
+.e-wl-love  {left:57.396%;top:67.214%;font-size:9.375cqw;font-weight:700;line-height:1.392;}
+.e-wl-society{left:60.573%;top:72.85%;font-size:9.375cqw;font-weight:700;line-height:1.390;}
+.e-wl-the   {left:55.417%;top:76.708%;font-size:3.854cqw;font-weight:400;font-style:italic;line-height:1.378;}
+
+.e-intro-sub{left:10.625%;top:36.466%;font-size:1.302cqw;letter-spacing:.1em;}
+.e-intro-b1{left:10.625%;top:38.687%;width:18.698%;font-size:.781cqw;}
+.e-intro-div{left:10.625%;top:46.140%;width:18.698%;}
+.e-stat1n{left:10.573%;top:49.778%;font-size:2.865cqw;}
+.e-stat1l{left:10.573%;top:53.150%;font-size:.938cqw;}
+.e-stat2n{left:22.552%;top:49.690%;font-size:2.865cqw;}
+.e-stat2l{left:22.552%;top:53.150%;font-size:.938cqw;}
+.e-stat3n{left:30.573%;top:49.778%;font-size:2.865cqw;}
+.e-stat3l{left:30.625%;top:53.150%;font-size:.938cqw;}
+.e-intro-b2{left:10.625%;top:55.146%;width:32.031%;font-size:.781cqw;}
+.e-intro-about{left:10.573%;top:58.516%;font-size:.938cqw;}
+
+.e-wl-tag{left:57.292%;top:83.005%;font-size:1.510cqw;}
+.e-wl-tag2{left:68.229%;top:83.005%;font-size:1.510cqw;}
+.e-wl-body{left:57.292%;top:85.359%;width:25.365%;font-size:.781cqw;}
+.e-wl-link{left:57.292%;top:88.685%;font-size:.938cqw;}
+
+.i-hero-hand{left:45%;top:7%;width:54%;z-index:2;}  /* hero hand + 45th heart, full image (not cut at right) */
+.i-hands{left:2.708%;top:69.077%;width:42.135%;}             /* lower "we love society" hands */
+/* decorative sparkles, floating heart + globe (split from visual.png) */
+.i-star1{left:70.781%;top:6.877%;width:3.490%;}              /* sparkle, upper-right */
+.i-star2{left:45.521%;top:37.533%;width:4.219%;}             /* sparkle, mid-left */
+.i-heart{left:51.763%;top:11.281%;width:5.128%;z-index:1;}   /* small floating heart, top */
+.i-earth{left:77.708%;top:60.426%;width:6.719%;z-index:2;}   /* globe, between the two hand graphics */
+
+/* ---- full-bleed background blobs ----
+   .bleed clips to the section (= viewport width); .bleed__canvas reproduces
+   the centred 1920 grid (max-width + cqw) WITHOUT clipping, so blobs sit at
+   their design % positions and scale on the grid, yet are free to extend past
+   the 1920 canvas edge and bleed to the viewport edge above 1920px. */
+.bleed{ position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+/* a bleed layer that paints ABOVE the section's text (e.g. support hand) */
+.bleed--front{ z-index:2; }
+/* No max-width cap: above 1920px the bleed layer keeps filling the viewport
+   so the background blobs + support hand continue to the screen edge instead
+   of stopping at the frozen 1920 canvas. (≤1920 is unaffected — the canvas
+   already equals the viewport there.) */
+.bleed__canvas{ position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width:100%; height:100%; container-type:inline-size; }
+.bleed .img{ z-index:0; }
+.i-color1{left:-15%;top:24%;width:53%;}        /* yellow #F4D789 — mid-left behind stats, bleeds left */
+.i-color2{left:55%;top:70%;width:44%;}         /* blue — society blob, lower-right */
+.i-color3{left:55.69%;top:-7.81%;width:78.77%;} /* white glow — upper-right */
+
+/* =================================================================
+   OUR SERVICES   (1920 x 1600)
+   ================================================================= */
+/* services background shapes (split into two SVGs) */
+.i-color5{left:0;top:82.149%;width:91.238%;z-index:0;}        /* green blob — bottom-left */
+.i-color4{left:68.012%;top:42.947%;width:34.427%;z-index:0;}  /* blue circle — right, bleeds off the canvas edge */
+.e-our     {left:10.208%;top:3.375%;font-size:9.375cqw;font-weight:600;line-height:1.333;}
+.e-services{left:15.469%;top:11.188%;font-size:9.375cqw;font-weight:600;line-height:1.333;}
+.e-svc-label{left:50%;transform:translateX(-50%);top:6.06%;font-size:1.042cqw;letter-spacing:.1em;}
+
+/* card stat numbers use the lighter Playfair Regular cut */
+.e-c1-s1,.e-c1-s2,.e-c1-s3,.e-c2-s1{ font-weight:400; letter-spacing:.02em; }
+
+.i-photo-kids{left:15.990%;top:26.500%;width:33.333%;height:25.625%;}
+.e-c1-h{left:53.594%;top:26.184%;font-size:1.510cqw;}
+.e-c1-b{left:53.594%;top:29.188%;width:23.073%;font-size:.781cqw;}
+.e-c1-s1{left:53.333%;top:33.188%;font-size:2.344cqw;}
+.e-c1-s2{left:60.990%;top:33.188%;font-size:2.344cqw;}
+.e-c1-s3{left:67.708%;top:33.188%;font-size:2.344cqw;}
+.e-c1-star{left:62.604%;top:34.688%;font-size:.938cqw;}
+.e-c1-l1{left:53.542%;top:36.686%;font-size:.625cqw;}
+.e-c1-l2{left:60.990%;top:36.686%;font-size:.625cqw;}
+.e-c1-l3{left:67.708%;top:36.686%;font-size:.625cqw;}
+.e-c1-link{left:53.594%;top:39.750%;font-size:.938cqw;}
+.i-svc-family{left:66.794%;top:35.500%;width:18.065%;}
+
+.i-photo-cycling{left:50.625%;top:60.250%;width:33.333%;height:25.625%;}
+.e-c2-h{left:17.135%;top:59.746%;font-size:1.510cqw;}
+.e-c2-b{left:17.135%;top:62.750%;width:23.073%;font-size:.781cqw;}
+.e-c2-s1{left:17.292%;top:67.125%;font-size:2.344cqw;}
+.e-c2-tag{left:25.521%;top:68.750%;font-size:1.198cqw;}
+.e-c2-tag .x{ color:currentColor; margin:0 .5em; }
+.e-c2-l1{left:17.344%;top:70.811%;font-size:.625cqw;}
+.e-c2-link{left:17.135%;top:73.310%;font-size:.938cqw;}
+.i-svc-bike{left:30.677%;top:76.750%;width:18.646%;}
+
+/* =================================================================
+   SUPPORT   (1920 x 842)
+   ================================================================= */
+/* sits behind the jar/hand graphic (z-index below .i-jar) */
+.e-sup-support{left:56.979%;top:19.240%;font-size:8.333cqw;font-weight:600;line-height:1.331;z-index:1;}
+.e-sup-us     {left:56.979%;top:34.086%;font-size:8.333cqw;font-weight:600;line-height:1.331;z-index:1;}
+.e-sup-label{left:47.760%;top:9.026%;font-size:1.042cqw;}
+.e-sup-i1h{left:17.292%;top:23.865%;font-size:1.510cqw;}
+.e-sup-i1b{left:17.292%;top:30.285%;width:24.323%;font-size:.781cqw;}
+.e-sup-i1l{left:17.135%;top:39.200%;font-size:.938cqw;}
+.e-sup-i2h{left:17.292%;top:52.962%;font-size:1.510cqw;}
+.e-sup-i2b{left:17.292%;top:59.382%;width:24.323%;font-size:.781cqw;}
+.e-sup-i2l{left:17.135%;top:68.300%;font-size:.938cqw;}
+/* hand + jar graphic — sized on the 1920 grid (1465.67px wide); lives in a
+   front bleed layer so the arm runs off the right viewport edge (uncropped) */
+.i-jar{left:50.781%;top:33.014%;width:76.337%;}
+
+/* =================================================================
+   FOOTER   (1920 x 315)
+   ================================================================= */
+.i-foot-logo{left:10.469%;top:19.048%;width:14.635%;}
+.e-foot-copy{left:10.625%;top:73.651%;font-size:.781cqw;color:#000;}
+.i-foot-chest{left:75.417%;top:24.127%;width:5.521%;}
+.i-foot-swd{left:83.177%;top:23.175%;width:2.604%;}
+.e-foot-swd-t{left:86.198%;top:24%;font-size:.68cqw;line-height:1.2;font-weight:500;text-transform:uppercase;letter-spacing:.02em;white-space:normal;}
+
+/* =================================================================
+   GROUPING WRAPPERS
+   On desktop these generate NO box (display:contents), so the absolutely
+   positioned children inside them resolve exactly as before against
+   .sec__inner — desktop layout is byte-for-byte unchanged. They only
+   become real flex rows/columns under the mobile breakpoint below.
+   ================================================================= */
+.m-stats,.m-stat,.m-tags,.m-wl-typo,
+.m-c1-stats,.m-c2-meta,.m-foot-row{ display:contents; }
+
+/* mobile-only nav controls — hidden on desktop */
+.nav__burger,.nav__mobile{ display:none; }
+
+/* =================================================================
+   NAV (768–1919px) — stop scaling with the canvas. Below 1920 the
+   logo / menu / CTA hold a FIXED size and the bar just pulls inward to
+   the tier's grid margin (var(--margin)), instead of shrinking via cqw.
+   ================================================================= */
+@media (min-width:768px) and (max-width:1919px){
+  .nav__inner{ padding:24px var(--margin) 0; }
+  .nav__logo img{ height:58px; }
+  .nav__menu{ gap:30px; margin-left:40px; }
+  .nav__menu a{ font-size:16px; }
+  .nav__right{ gap:24px; }
+  .nav__partner{ height:30px; }
+  .nav__partner-pair img{ height:32px; }
+  .nav__partner-txt{ font-size:10px; }
+  .nav__cta{ width:128px; height:48px; font-size:16px; }
+}
+@media (min-width:768px) and (max-width:1023px){
+  /* not enough room for the partner logos at tablet width */
+  .nav__partners{ display:none; }
+  .nav__menu{ gap:22px; margin-left:24px; }
+  .nav__logo img{ height:52px; }
+}
+
+/* =================================================================
+   TIER M — LAPTOP / SMALL DESKTOP (1024–1439px) · 8 columns
+   The 1920 composition is kept, but body / label / nav / link text is
+   stepped up to fixed readable px (it would otherwise scale to ~8px),
+   text boxes are widened to absorb the larger type, and the left column
+   is nudged onto the 8-col margin (6.25%). Display type + graphics keep
+   their proportional (cqw/%) scaling.
+   ================================================================= */
+@media (min-width:1024px) and (max-width:1439px){
+  /* ---- LANDING ---- */
+  .e-wecare{ left:6.25%; }
+  .e-intro-sub{ left:6.25%; font-size:18px; }
+  .e-intro-b1{ left:6.25%; width:38%; font-size:14.5px; }
+  .e-intro-div{ left:6.25%; width:38%; }
+  .e-stat1n{ left:6.2%; }     .e-stat1l{ left:6.2%;  font-size:13px; }
+  .e-stat2n{ left:18.2%; }    .e-stat2l{ left:18.2%; font-size:13px; }
+  .e-stat3n{ left:26.5%; }    .e-stat3l{ left:26.5%; font-size:13px; }
+  .e-intro-b2{ left:6.25%; width:46%; font-size:14.5px; }
+  .e-intro-about{ left:6.25%; top:62%; font-size:14px; }   /* pushed down: bigger body needs room */
+  .e-wl-tag,.e-wl-tag2{ font-size:18px; }
+  .e-wl-body{ width:33%; font-size:14.5px; }
+  .e-wl-link{ top:91%; font-size:14px; }
+
+  /* ---- SERVICES (followers pushed below the 2-line stepped body) ---- */
+  .e-svc-label{ font-size:14px; }
+  .e-c1-h,.e-c2-h{ font-size:19px; }
+  .e-c1-b{ width:40%; font-size:14.5px; }
+  .e-c1-s1,.e-c1-s2,.e-c1-s3{ top:37%; }
+  .e-c1-star{ top:38.5%; font-size:13px; }
+  .e-c1-l1,.e-c1-l2,.e-c1-l3{ top:40.5%; font-size:11px; }
+  .i-svc-family{ top:39.5%; }
+  .e-c1-link{ top:44.5%; font-size:14px; }
+  .e-c2-b{ width:40%; font-size:14.5px; }
+  .e-c2-s1{ top:69.5%; }
+  .e-c2-tag{ top:71%; font-size:16px; }
+  .e-c2-l1{ top:73%; font-size:11px; }
+  .e-c2-link{ top:76%; font-size:14px; }
+
+  /* ---- SUPPORT (taller canvas + wider body so it stays 2 lines) ---- */
+  .sec--support .sec__inner{ aspect-ratio:1920/1020; }
+  .e-sup-label{ font-size:14px; }
+  .e-sup-i1h,.e-sup-i2h{ font-size:19px; }
+  .e-sup-i1b{ width:44%; font-size:14.5px; }
+  .e-sup-i1l{ top:43%; font-size:14px; }
+  .e-sup-i2b{ width:44%; font-size:14.5px; }
+  .e-sup-i2l{ top:72%; font-size:14px; }
+
+  /* ---- FOOTER ---- */
+  .e-foot-copy{ font-size:13px; }
+  .e-foot-swd-t{ font-size:11px; }
+}
+
+/* =================================================================
+   TIER L — DESKTOP (1440–1919px) · 12 columns
+   Composition unchanged from 1920; only the smallest text (body, tiny
+   card labels, partner text) is stepped up so it stays readable when the
+   canvas scales down toward 1440.
+   ================================================================= */
+@media (min-width:1440px) and (max-width:1919px){
+  /* body stepped to 14px + boxes widened to stay ~2 lines, followers nudged
+     down a touch so the slightly taller text never reaches the buttons/stats */
+  .e-intro-b1{ width:25%; font-size:14px; }
+  .e-intro-b2{ width:43%; font-size:14px; }
+  .e-wl-body{ width:34%; font-size:14px; }
+  .e-wl-link{ top:90.5%; }
+  .e-c1-b{ width:31%; font-size:14px; }
+  .e-c1-s1,.e-c1-s2,.e-c1-s3{ top:35.5%; }
+  .e-c1-star{ top:37%; }
+  .e-c1-l1,.e-c1-l2,.e-c1-l3{ top:39%; font-size:11px; }
+  .i-svc-family{ top:38%; }
+  .e-c1-link{ top:42.5%; }
+  .e-c2-b{ width:31%; font-size:14px; }
+  .e-c2-s1{ top:68%; }
+  .e-c2-tag{ top:69.5%; }
+  .e-c2-l1{ top:71.5%; font-size:11px; }
+  .e-c2-link{ top:74.5%; }
+  .e-sup-i1b{ width:32%; font-size:14px; }
+  .e-sup-i1l{ top:42%; }
+  .e-sup-i2b{ width:32%; font-size:14px; }
+  .e-sup-i2l{ top:71%; }
+  .e-foot-copy{ font-size:13px; }
+}
+
+/* =================================================================
+   TIER S — TABLET (768–1023px) · 6 columns
+   Same strategy as M but with slightly larger type (the canvas is
+   narrower) and wider text boxes. Composition still side-by-side here;
+   it only stacks to a single column at the mobile tier (≤767).
+   ================================================================= */
+@media (min-width:768px) and (max-width:1023px){
+  /* taller service / support canvases so the 3-line stepped bodies fit
+     without colliding with the stats / buttons below them */
+  .sec--services .sec__inner{ aspect-ratio:1920/2000; }
+  .sec--support  .sec__inner{ aspect-ratio:1920/1450; }
+
+  /* ---- LANDING ---- */
+  .e-wecare{ left:6.25%; }
+  .e-intro-sub{ left:6.25%; font-size:18px; }
+  .e-intro-b1{ left:6.25%; width:42%; font-size:15px; }
+  .e-intro-div{ left:6.25%; width:42%; }
+  .e-stat1n{ left:6.2%; }     .e-stat1l{ left:6.2%;  font-size:13px; }
+  .e-stat2n{ left:19%; }      .e-stat2l{ left:19%;   font-size:13px; }
+  .e-stat3n{ left:28%; }      .e-stat3l{ left:28%;   font-size:13px; }
+  .e-intro-b2{ left:6.25%; top:56%; width:50%; font-size:15px; }
+  .e-intro-about{ left:6.25%; top:65%; font-size:14px; }
+  .e-wl-tag,.e-wl-tag2{ font-size:17px; }
+  .e-wl-body{ width:36%; font-size:15px; }
+  .e-wl-link{ top:94%; font-size:14px; }
+
+  /* ---- SERVICES ---- */
+  .e-svc-label{ font-size:14px; }
+  .e-c1-h,.e-c2-h{ font-size:19px; }
+  .e-c1-b{ width:40%; font-size:15px; }
+  .e-c1-s1,.e-c1-s2,.e-c1-s3{ top:40%; }
+  .e-c1-star{ top:41.5%; font-size:13px; }
+  .e-c1-l1,.e-c1-l2,.e-c1-l3{ top:43.5%; font-size:11px; }
+  .i-svc-family{ top:42%; }
+  .e-c1-link{ top:47%; font-size:14px; }
+  .e-c2-b{ width:40%; font-size:15px; }
+  .e-c2-s1{ top:73%; }
+  .e-c2-tag{ top:74.5%; font-size:16px; }
+  .e-c2-l1{ top:76.5%; font-size:11px; }
+  .e-c2-link{ top:79.5%; font-size:14px; }
+  .i-svc-bike{ top:83%; }
+
+  /* ---- SUPPORT ---- */
+  .e-sup-label{ font-size:14px; }
+  .e-sup-i1h,.e-sup-i2h{ font-size:19px; }
+  .e-sup-i1b{ width:38%; font-size:15px; }
+  .e-sup-i1l{ top:45%; font-size:14px; }
+  .e-sup-i2b{ width:38%; font-size:15px; }
+  .e-sup-i2l{ top:74%; font-size:14px; }
+
+  /* ---- FOOTER ---- */
+  .e-foot-copy{ font-size:13px; }
+  .e-foot-swd-t{ font-size:11px; }
+}
+
+/* =================================================================
+   MOBILE  (≤767px) — TRUE responsive reflow, not a scaled canvas.
+   Each section drops its frozen 1920 aspect-ratio canvas and becomes a
+   normal single-column flow (20px side margins, per the mobile grid).
+   Positions/sizes are real px so text wraps naturally.
+   ================================================================= */
+@media (max-width:767px){
+
+  /* ---- sections become flowing single columns ---- */
+  .sec__inner{
+    position:relative; max-width:none; width:100%;
+    aspect-ratio:auto; height:auto; overflow:hidden;
+    container-type:normal;
+    display:flex; flex-direction:column; align-items:flex-start;
+    padding:0 20px;
+  }
+  /* aspect-ratio:auto must be set at this specificity (0,2,0) to beat the
+     desktop per-section aspect-ratio rules — otherwise the canvas height
+     stays frozen and overflow:hidden clips all the reflowed content. */
+  .sec--landing  .sec__inner{ aspect-ratio:auto; padding-top:96px;  padding-bottom:0; }
+  .sec--services .sec__inner{ aspect-ratio:auto; padding-top:40px;  padding-bottom:48px; }
+  .sec--support  .sec__inner{ aspect-ratio:auto; padding-top:40px;  padding-bottom:56px; }
+  .sec--footer   .sec__inner{ aspect-ratio:auto; padding-top:40px;  padding-bottom:32px; }
+
+  /* text + images flow inline by default; sizing handled per element */
+  .t,.disp{ position:static; white-space:normal; left:auto; top:auto;
+    width:auto; max-width:100%; transform:none; line-height:1.2; }
+  .img{ position:static; left:auto; top:auto; width:auto; transform:none; }
+
+  /* hide desktop background blobs (mobile uses flat section colour) */
+  .bleed,.i-color4,.i-color5,.i-earth{ display:none; }
+
+  /* hero sparkles / heart stay as small absolute accents (out of flow) */
+  .i-star1{ position:absolute; right:26px;  top:124px; width:26px; z-index:4; }
+  .i-star2{ position:absolute; left:24px;   top:300px; width:32px; z-index:4; }
+  .i-heart{ position:absolute; right:60px;  top:150px; width:30px; z-index:4; }
+
+  /* ---- NAV : logo + hamburger ---- */
+  .nav{ display:block; }   /* desktop makes .nav a centring flex row; stack on mobile */
+  .nav__inner{ max-width:none; padding:14px 20px; align-items:center; }
+  .nav__menu,.nav__right{ display:none; }
+  .nav__logo img{ height:40px; }
+  .nav__burger{ display:flex; flex-direction:column; justify-content:center;
+    gap:5px; margin-left:auto; width:34px; height:34px; padding:6px 4px;
+    background:none; border:0; cursor:pointer; }
+  .nav__burger span{ display:block; height:2px; width:100%; background:var(--navy);
+    border-radius:2px; transition:transform .25s ease, opacity .2s ease; }
+  .nav--open .nav__burger span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  .nav--open .nav__burger span:nth-child(2){ opacity:0; }
+  .nav--open .nav__burger span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+  .nav__mobile{ display:flex; flex-direction:column; gap:4px;
+    max-height:0; overflow:hidden; transition:max-height .3s ease;
+    background:var(--cream); padding:0 20px; }
+  .nav--open .nav__mobile{ max-height:340px; padding:8px 20px 20px; }
+  .nav__mobile a{ font:500 16px/1 "Noto Sans HK","Inter",sans-serif;
+    letter-spacing:.07em; color:var(--navy); text-decoration:none; padding:12px 0;
+    border-bottom:1px solid rgba(11,20,47,.08); }
+  .nav__mobile-cta{ margin-top:12px; border:0!important; text-align:center;
+    background:var(--navy); color:#fff!important; border-radius:2em; padding:14px 0!important; }
+
+  /* ---- shared mobile type roles ---- */
+  .disp{ font-size:72px; line-height:1.0; }
+  .sans{ font-size:13px; line-height:1.7; width:100%; }
+  .lnk{ font-size:15px; }
+  .ming{ letter-spacing:.08em; }
+  .label-line{ align-self:center; font-size:15px; letter-spacing:.1em; }
+
+  /* stat columns shared layout (landing + cards) */
+  .m-stats,.m-c1-stats{ display:flex; flex-direction:row; gap:14px;
+    width:100%; align-items:flex-start; }
+  .m-stat{ display:flex; flex-direction:column; gap:6px; flex:1 1 0; min-width:0; }
+  .m-stat .num{ font-size:40px; line-height:1; }
+  .m-stat .ming{ font-size:12px; letter-spacing:.04em; opacity:.85; }
+
+  /* =====================  LANDING  ===================== */
+  .e-wecare{ order:1; font-size:80px; line-height:1.0; width:min-content;
+    margin-bottom:8px; }
+  .i-hero-hand{ order:2; width:100%; max-width:360px; align-self:center;
+    margin:4px auto 28px; }
+  .e-intro-sub{ order:3; font-size:24px; margin-bottom:14px; }
+  .e-intro-b1{ order:4; margin-bottom:22px; }
+  .e-intro-div{ order:5; position:static; width:100%; margin-bottom:22px; }
+  /* landing stats: 68,000+ is wide, so size columns to content and shrink
+     the figures a touch so all three fit the row */
+  .m-stats{ order:6; margin-bottom:24px; justify-content:space-between; gap:10px; }
+  .m-stats .m-stat{ flex:0 1 auto; }
+  .m-stats .num{ font-size:32px; }
+  .e-intro-b2{ order:7; margin-bottom:18px; }
+  .e-intro-about{ order:8; margin-bottom:56px; }
+
+  .m-wl-typo{ order:9; display:block; position:relative; width:100%;
+    height:190px; margin-bottom:8px; }
+  .m-wl-typo .disp{ position:absolute; font-size:72px; line-height:1; }
+  .e-wl-we{ left:0; top:0; }
+  .e-wl-love{ left:90px; top:0; }
+  .e-wl-the{ left:74px; top:84px; font-size:26px; font-style:italic; }
+  .e-wl-society{ left:50px; top:58px; }
+  .m-tags{ order:10; display:flex; gap:6px; flex-wrap:wrap;
+    margin-bottom:18px; }
+  .m-tags .ming{ font-size:22px; letter-spacing:.04em; }
+  .e-wl-body{ order:11; margin-bottom:18px; }
+  .e-wl-link{ order:12; margin-bottom:40px; }
+  .i-hands{ order:13; width:64%; align-self:center; margin-top:8px; }
+
+  /* =====================  SERVICES  ===================== */
+  .e-svc-label{ order:1; margin-bottom:24px; }
+  .e-our{ order:2; font-size:64px; }
+  .e-services{ order:3; font-size:64px; margin-bottom:40px; }
+
+  .i-photo-kids{ order:4; width:100%; height:auto; aspect-ratio:400/256;
+    object-fit:cover; border-radius:12px; margin-bottom:28px; }
+  .e-c1-h{ order:5; font-size:26px; margin-bottom:16px; }
+  .e-c1-b{ order:6; margin-bottom:24px; }
+  .m-c1-stats{ order:7; margin-bottom:20px; }
+  .e-c1-star{ font-size:16px!important; }
+  .i-svc-family{ order:8; width:78%; margin:0 0 18px; }
+  .e-c1-link{ order:9; margin-bottom:64px; }
+
+  .i-photo-cycling{ order:10; width:100%; height:auto; aspect-ratio:400/256;
+    object-fit:cover; border-radius:12px; margin-bottom:28px; }
+  .e-c2-h{ order:11; font-size:26px; margin-bottom:16px; }
+  .e-c2-b{ order:12; margin-bottom:24px; }
+  .m-c2-meta{ order:13; display:flex; align-items:flex-end; gap:28px;
+    margin-bottom:20px; }
+  .m-c2-meta .e-c2-tag{ font-size:22px; }
+  .i-svc-bike{ order:14; width:70%; margin:0 0 18px; }
+  .e-c2-link{ order:15; }
+
+  /* =====================  SUPPORT  ===================== */
+  .e-sup-label{ order:1; margin-bottom:24px; }
+  .e-sup-label,.e-sup-support,.e-sup-us{ color:#fff; }
+  .e-sup-support{ order:2; font-size:64px; }
+  .e-sup-us{ order:3; font-size:64px; margin-bottom:12px; }
+  .sec--support .bleed--front,.sec--support .bleed__canvas{ display:contents; }
+  .i-jar{ order:4; position:static; width:100%; max-width:420px;
+    align-self:center; margin:0 auto 36px; }
+  .e-sup-i1h{ order:5; font-size:26px; margin-bottom:16px; }
+  .e-sup-i1b{ order:6; margin-bottom:18px; }
+  .e-sup-i1l{ order:7; margin-bottom:40px; }
+  .e-sup-i2h{ order:8; font-size:26px; margin-bottom:16px; }
+  .e-sup-i2b{ order:9; margin-bottom:18px; }
+  .e-sup-i2l{ order:10; }
+
+  /* =====================  FOOTER  ===================== */
+  .i-foot-logo{ order:1; width:200px; margin-bottom:40px; }
+  .m-foot-row{ order:2; display:flex; align-items:center; gap:14px;
+    margin-bottom:28px; }
+  .i-foot-chest{ height:36px; width:auto; }
+  .i-foot-swd{ height:38px; width:auto; }
+  .e-foot-swd-t{ font-size:11px; line-height:1.2; width:auto;
+    text-transform:uppercase; letter-spacing:.02em; }
+  .e-foot-copy{ order:3; font-size:11px; color:#000; }
+}
+
+/* =================================================================
+   LAYOUT GRID OVERLAY  (Figma column guide — press "G" to toggle)
+   12 columns · 204px margins (10.625%) · 25px gutter (1.302%) ·
+   #FF6200 @ 10%. Caps + centres on the 1920 canvas like .sec__inner.
+   ================================================================= */
+.grid-overlay{ position:fixed; inset:0; z-index:9999; pointer-events:none; display:none; }
+.grid-overlay.is-on{ display:block; }
+.grid-overlay__inner{
+  position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:1920px; height:100%;
+  container-type:inline-size;
+  padding:0 var(--margin);            /* tier margin */
+  display:flex; gap:var(--gutter);    /* tier gutter */
+}
+.grid-overlay__col{ flex:1 1 0; height:100%; background:rgba(255,98,0,.10); }
+/* show only the active tier's columns (12 created in JS) */
+@media (max-width:1439px){ .grid-overlay__col:nth-child(n+9){ display:none; } }
+@media (max-width:1023px){ .grid-overlay__col:nth-child(n+7){ display:none; } }
+@media (max-width:767px){
+  .grid-overlay__inner{ max-width:none; padding:0 20px; gap:15px; }
+  .grid-overlay__col:nth-child(n+5){ display:none; }
+}
