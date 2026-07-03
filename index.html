@@ -74,11 +74,19 @@
       <img class="img i-earth" src="assets/img/earth.png" alt="" aria-hidden="true" />
 
       <!-- display typography (Playfair Display web font) -->
-      <div class="disp e-wecare">we care.</div>
+      <!-- l-hero / l-cols / l-intro / l-society are display:contents everywhere
+           EXCEPT the M laptop tier (1024–1439), where they become 2-col grids so
+           the hero stays side-by-side. Desktop (≥1440) + mobile (≤767) are
+           therefore untouched (absolute canvas / single-column flow resolve as
+           if the wrappers weren't there). -->
+      <div class="l-hero">
+        <div class="disp e-wecare">we care.</div>
+        <img class="img i-hero-hand" src="assets/img/hand_01.png" alt="一對手捧住心形，心形上印有 45th anniversary" />
+      </div>
 
-      <img class="img i-hero-hand" src="assets/img/hand_01.png" alt="一對手捧住心形，心形上印有 45th anniversary" />
-
-      <h2 class="t ming e-intro-sub">45年讓愛綻放無間</h2>
+      <div class="l-cols">
+        <div class="l-intro">
+        <h2 class="t ming e-intro-sub">45年讓愛綻放無間</h2>
       <p class="t sans e-intro-b1">你現在閱讀的並不是真的文案，這些文字只顯示文案將會擺放的位置，我們會稱呼這些文案為假字。你現在閱讀的並不是真的文案這些文字。</p>
       <span class="e-intro-div div-line"></span>
 
@@ -99,12 +107,18 @@
 
       <p class="t sans e-intro-b2">你現在閱讀的並不是真的文案這些文字，只顯示文案將會擺放的位置，我們會稱呼這些文案為假字。你現在閱讀的並不是真的文案這些文字，只顯示文案將會擺放的位置。</p>
       <a class="t ming lnk e-intro-about" href="#about">關於懷愛會<span class="arr"></span></a>
+        </div>
 
+        <div class="l-society">
       <div class="m-wl-typo">
-        <div class="disp e-wl-we">we</div>
-        <div class="disp e-wl-love">love</div>
-        <div class="disp e-wl-the">the</div>
-        <div class="disp e-wl-society">society</div>
+        <div class="wl-row1">
+          <div class="disp e-wl-we">we</div>
+          <div class="disp e-wl-love">love</div>
+        </div>
+        <div class="wl-row2">
+          <div class="disp e-wl-the">the</div>
+          <div class="disp e-wl-society">society</div>
+        </div>
       </div>
       <div class="m-tags">
         <span class="t ming e-wl-tag tag-x">支援性服務</span>
@@ -112,6 +126,8 @@
       </div>
       <p class="t sans e-wl-body">你現在閱讀的並不是真的文案這些文字，只顯示文案將會擺放的位置，我們會稱呼這些文案為假字。你現在閱讀的並不是真的文案這些文字。</p>
       <a class="t ming lnk e-wl-link" href="#services">服務簡介<span class="arr"></span></a>
+        </div>
+      </div>
 
       <img class="img i-hands" src="assets/img/hero-graphic.png" alt="一對手砌成心形" />
       </div>
@@ -134,8 +150,10 @@
       <div class="disp e-our">our</div>
       <div class="disp e-services">services</div>
 
-      <!-- card 1 -->
+      <!-- card 1 — s-card becomes a 2-col grid (photo | text) at the M tier only -->
+      <div class="s-card">
       <img class="img photo i-photo-kids" src="assets/img/photo-kids.png" alt="兒童之家的小朋友" />
+      <div class="s-card__body">
       <h3 class="t ming e-c1-h">兒童之家</h3>
       <p class="t sans e-c1-b">你現在閱讀的並不是真的文案這些文字，只顯示文案將會擺放的位置，我們會稱呼這些文案為假字。</p>
       <div class="m-c1-stats">
@@ -155,9 +173,13 @@
       </div>
       <img class="img i-svc-family" src="assets/img/svc-family.svg" alt="" aria-hidden="true" />
       <a class="t ming lnk e-c1-link" href="#services">了解更多<span class="arr"></span></a>
+      </div>
+      </div>
 
-      <!-- card 2 -->
+      <!-- card 2 — reversed (text | photo) at the M tier -->
+      <div class="s-card s-card--rev">
       <img class="img photo i-photo-cycling" src="assets/img/photo-cycling.png" alt="懷愛夢騎行" />
+      <div class="s-card__body">
       <h3 class="t ming e-c2-h">懷愛夢騎行</h3>
       <p class="t sans e-c2-b">你現在閱讀的並不是真的文案這些文字，只顯示文案將會擺放的位置，我們會稱呼這些文案為假字。</p>
       <div class="m-c2-meta">
@@ -170,6 +192,8 @@
       <img class="img i-svc-bike" src="assets/img/svc-bike.svg" alt="" aria-hidden="true" />
       <a class="t ming lnk e-c2-link" href="#services">了解更多<span class="arr"></span></a>
       </div>
+      </div>
+      </div>
     </section>
 
     <!-- ============================================================
@@ -181,14 +205,9 @@
       <div class="disp on-blue e-sup-support">Support</div>
       <div class="disp on-blue e-sup-us">us</div>
 
-      <!-- hand + jar: full-bleed layer so the extended arm runs off the
-           right viewport edge (not clipped at the 1920 canvas) -->
-      <div class="bleed bleed--front" aria-hidden="true">
-        <div class="bleed__canvas">
-          <img class="img i-jar" src="assets/img/support-jar.svg" alt="" />
-        </div>
-      </div>
-
+      <!-- sup-grid becomes a 2-col grid (text items | jar) at the M tier -->
+      <div class="sup-grid">
+      <div class="sup-items">
       <h3 class="t ming on-blue e-sup-i1h">成為義工會員</h3>
       <p class="t sans on-blue e-sup-i1b">你現在閱讀的並不是真的文案這些文字，只顯示文案將會擺放的位置，我們會稱呼這些文案為假字。你現在閱讀的並不是真的文案。</p>
       <a class="t ming lnk on-blue e-sup-i1l" href="#contact">了解更多<span class="arr"></span></a>
@@ -196,6 +215,16 @@
       <h3 class="t ming on-blue e-sup-i2h">捐款支持</h3>
       <p class="t sans on-blue e-sup-i2b">你現在閱讀的並不是真的文案這些文字，只顯示文案將會擺放的位置，我們會稱呼這些文案為假字。你現在閱讀的並不是真的文案。</p>
       <a class="t ming lnk on-blue e-sup-i2l" href="#contact">了解更多<span class="arr"></span></a>
+      </div>
+
+      <!-- hand + jar: full-bleed layer so the extended arm runs off the
+           right viewport edge (not clipped at the 1920 canvas) -->
+      <div class="bleed bleed--front" aria-hidden="true">
+        <div class="bleed__canvas">
+          <img class="img i-jar" src="assets/img/support-jar.svg" alt="" />
+        </div>
+      </div>
+      </div>
       </div>
     </section>
 

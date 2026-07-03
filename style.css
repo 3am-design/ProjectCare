@@ -181,12 +181,14 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
 .bleed{ position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
 /* a bleed layer that paints ABOVE the section's text (e.g. support hand) */
 .bleed--front{ z-index:2; }
-/* No max-width cap: above 1920px the bleed layer keeps filling the viewport
-   so the background blobs + support hand continue to the screen edge instead
-   of stopping at the frozen 1920 canvas. (≤1920 is unaffected — the canvas
-   already equals the viewport there.) */
+/* Capped at the 1920 grid (like the content canvas) and centred. Above 1920px
+   the shapes therefore HOLD their 1920 position + size — they don't rescale to
+   the viewport. Because .bleed__canvas itself doesn't clip (only .bleed / .sec
+   clip to the viewport), the parts of each shape that the 1920 frame originally
+   cropped simply become visible, bleeding into the empty margin out to the
+   screen edge. (≤1920 is unaffected — the canvas already equals the viewport.) */
 .bleed__canvas{ position:absolute; top:0; left:50%; transform:translateX(-50%);
-  width:100%; height:100%; container-type:inline-size; }
+  width:100%; max-width:1920px; height:100%; container-type:inline-size; }
 .bleed .img{ z-index:0; }
 .i-color1{left:-15%;top:24%;width:53%;}        /* yellow #F4D789 — mid-left behind stats, bleeds left */
 .i-color2{left:55%;top:70%;width:44%;}         /* blue — society blob, lower-right */
@@ -261,8 +263,11 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
    .sec__inner — desktop layout is byte-for-byte unchanged. They only
    become real flex rows/columns under the mobile breakpoint below.
    ================================================================= */
-.m-stats,.m-stat,.m-tags,.m-wl-typo,
-.m-c1-stats,.m-c2-meta,.m-foot-row{ display:contents; }
+.m-stats,.m-stat,.m-tags,.m-wl-typo,.wl-row1,.wl-row2,
+.m-c1-stats,.m-c2-meta,.m-foot-row,
+/* 2-col grid wrappers — inert (no box) except at the M laptop tier */
+.l-hero,.l-cols,.l-intro,.l-society,
+.s-card,.s-card__body,.sup-grid,.sup-items{ display:contents; }
 
 /* mobile-only nav controls — hidden on desktop */
 .nav__burger,.nav__mobile{ display:none; }
@@ -283,63 +288,200 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
   .nav__partner-txt{ font-size:10px; }
   .nav__cta{ width:128px; height:48px; font-size:16px; }
 }
-@media (min-width:768px) and (max-width:1023px){
-  /* not enough room for the partner logos at tablet width */
+@media (min-width:768px) and (max-width:1199px){
+  /* not enough room for the partner logos below ~1200px */
   .nav__partners{ display:none; }
   .nav__menu{ gap:22px; margin-left:24px; }
   .nav__logo img{ height:52px; }
 }
+@media (min-width:768px) and (max-width:1023px){
+  /* tablet: compact the menu so the links never wrap */
+  .nav__menu{ gap:16px; margin-left:20px; }
+  .nav__menu a{ font-size:14px; white-space:nowrap; }
+  .nav__cta{ width:104px; height:42px; font-size:14px; }
+}
 
 /* =================================================================
-   TIER M — LAPTOP / SMALL DESKTOP (1024–1439px) · 8 columns
-   The 1920 composition is kept, but body / label / nav / link text is
-   stepped up to fixed readable px (it would otherwise scale to ~8px),
-   text boxes are widened to absorb the larger type, and the left column
-   is nudged onto the 8-col margin (6.25%). Display type + graphics keep
-   their proportional (cqw/%) scaling.
+   TIER M + S — LAPTOP / TABLET (768–1439px) · FLOW / AUTO-HEIGHT
+   Per the directive "section height is unlimited — fit the content":
+   instead of cramming the layout into a fixed-ratio canvas (which made
+   the stepped-up text collide), each .sec__inner DROPS its aspect-ratio
+   and becomes a normal vertical flow whose height is driven by content,
+   so nothing can overlap. Display words + key graphics keep scaling
+   proportionally (cqw / %); body / label / link text holds a fixed
+   readable size. Decorative background blobs are dropped here (flat
+   section colour) so nothing floats out of place off the grid.
+   ================================================================= */
+@media (min-width:768px) and (max-width:1439px){
+
+  /* ---- sections become content-driven vertical flows ---- */
+  .sec__inner{
+    max-width:none; width:100%;
+    display:flex; flex-direction:column; align-items:flex-start;
+    gap:0; container-type:inline-size;            /* keep cqw tracking the viewport */
+    padding-left:var(--margin); padding-right:var(--margin);
+  }
+  /* aspect-ratio:auto must be set at the same 0,2,0 specificity as the
+     desktop per-section rules, else the frozen height + overflow:hidden
+     would clip the reflowed content. */
+  .sec--landing  .sec__inner{ aspect-ratio:auto; padding-top:10cqw; padding-bottom:0; }
+  .sec--services .sec__inner{ aspect-ratio:auto; padding-top:6cqw;  padding-bottom:7cqw; }
+  .sec--support  .sec__inner{ aspect-ratio:auto; padding-top:6cqw;  padding-bottom:7cqw; }
+  .sec--footer   .sec__inner{ aspect-ratio:auto; padding-top:5cqw;  padding-bottom:5cqw; }
+
+  /* take text + graphics out of the absolute canvas → normal flow.
+     Display words (.disp) and stat numbers (.num) keep their cqw
+     font-size from the base rules, so they still scale with the viewport. */
+  .t,.disp{ position:static; left:auto; top:auto; transform:none;
+    width:auto; max-width:100%; }
+  .img{ position:static; left:auto; top:auto; transform:none; }
+
+  /* readable body / label / link / heading text (overrides the tiny cqw) */
+  .sans{ font-size:15px; line-height:1.7; max-width:34em; }
+  .e-intro-sub{ font-size:18px; letter-spacing:.12em; }
+  .ming.lnk{ font-size:15px; }
+  .e-c1-h,.e-c2-h,.e-sup-i1h,.e-sup-i2h{ font-size:20px; }
+  .label-line{ align-self:center; font-size:14px; }   /* section labels are centred in the design */
+  .label-line::after{ width:2.6em; }
+
+  /* ---- background blobs STAY (the design keeps them at every size).
+     The blobs live in .bleed/.bleed__canvas (absolute, behind content);
+     the generic .img{position:static} above must not pull them into the
+     flow, so re-assert absolute + re-pin tops to the flowed heights. ---- */
+  .sec--landing .bleed .img,.sec--services .bleed .img{ position:absolute; }
+  .i-color3{ left:26%; top:-4%; width:100%; }    /* white glow — behind hero */
+  .i-color1{ left:-16%; top:22%; width:56%; }    /* yellow — behind stats */
+  .i-color2{ left:52%; top:68%; width:52%; }     /* blue — behind society */
+  .i-color5{ left:0; top:78%; width:100%; }      /* green — services bottom */
+  .i-color4{ left:70%; top:38%; width:36%; }     /* blue circle — services right */
+  /* floating accents: keep sparkle + heart pinned to the hero, drop the rest */
+  .i-star2,.i-earth{ display:none; }
+  .i-star1{ position:absolute; right:8%; top:11cqw; width:3.4cqw; z-index:3; }
+  .i-heart{ position:absolute; left:50%; top:13cqw; width:5cqw; z-index:1; }
+
+  /* shared stat rows (landing + card 1) */
+  .m-stats,.m-c1-stats{ display:flex; flex-direction:row; flex-wrap:wrap;
+    gap:2.6cqw; align-items:flex-start; }
+  .m-stat{ display:flex; flex-direction:column; gap:.4em; }
+  .m-stat .ming{ font-size:13px; letter-spacing:.04em; opacity:.85; }
+  .e-c1-star{ font-size:13px; }
+
+  /* ===================  LANDING  =================== */
+  .e-wecare{ margin-bottom:.1em; }
+  /* hero hand runs edge-to-edge, cropping at the right like the design */
+  .i-hero-hand{ width:116%; max-width:none; align-self:flex-start;
+    margin:2cqw -7.143% 6cqw -7.143%; }
+  .e-intro-sub{ margin-bottom:.8em; }
+  .e-intro-b1{ margin-bottom:1.4em; }
+  .e-intro-div{ position:static; width:100%; max-width:34em; height:1px; margin-bottom:1.6em; }
+  .m-stats{ margin-bottom:1.6em; gap:5cqw; }
+  .e-intro-b2{ margin-bottom:1.2em; }
+  .e-intro-about{ margin-bottom:7cqw; }
+  /* "we love / the society" — keep the staggered lockup from the design */
+  .m-wl-typo{ display:flex; flex-direction:column; margin-bottom:.4em; max-width:100%; }
+  .wl-row1{ display:flex; align-items:baseline; gap:2.2cqw; }
+  .wl-row2{ display:flex; align-items:baseline; gap:2.2cqw; margin:-1.2cqw 0 0 10cqw; }
+  .m-wl-typo .disp{ position:static; line-height:1.15; }
+  .m-tags{ display:flex; flex-wrap:wrap; gap:.2em 1.2em; margin:1cqw 0 1.2em; }
+  .e-wl-tag,.e-wl-tag2{ font-size:17px; }
+  .e-wl-body{ margin-bottom:1.2em; }
+  .e-wl-link{ margin-bottom:6cqw; }
+  /* society hands — bleed off the right edge (as in the mobile design) */
+  .i-hands{ width:64%; max-width:none; align-self:flex-end; margin:0 -7.143% 0 0; }
+
+  /* ===================  SERVICES  =================== */
+  .e-svc-label{ margin-bottom:4cqw; }
+  .e-our{ line-height:1.0; }
+  .e-services{ line-height:1.0; margin:0 0 5cqw .56em; }  /* staggered indent, per design */
+  .i-photo-kids,.i-photo-cycling{ width:100%; max-width:none; height:auto;
+    aspect-ratio:640/410; object-fit:cover; margin-bottom:3.5cqw; }  /* design crop ratio */
+  .e-c1-h,.e-c2-h{ margin-bottom:1em; }
+  .e-c1-b,.e-c2-b{ margin-bottom:1.6em; }
+  .m-c1-stats{ margin-bottom:2.4cqw; }
+  .m-c2-meta{ display:flex; flex-wrap:wrap; align-items:flex-end; gap:1em 3cqw;
+    margin-bottom:2.4cqw; }
+  .e-c2-tag{ font-size:17px; }
+  .i-svc-family{ width:44%; max-width:none; margin:0 0 3cqw; align-self:flex-end; }
+  .i-svc-bike{ width:40%; max-width:none; margin:0 0 3cqw; align-self:flex-end; }
+  .e-c1-link{ margin-bottom:9cqw; }
+
+  /* ===================  SUPPORT  =================== */
+  .e-sup-label{ margin-bottom:4cqw; }
+  .e-sup-support{ line-height:1.05; }
+  .e-sup-us{ line-height:1.05; }
+  /* bring the jar/hand graphic into the flow (it lives in a front bleed) */
+  .sec--support .bleed--front,.sec--support .bleed__canvas{ display:contents; }
+  /* jar + arm bleed off the right edge, tucked up beside "us".
+     Flow order per the design: Support us → jar → items (the jar sits
+     last in the DOM, so reorder with flex order at the S tier). */
+  .sec--support .sup-items > .t{ order:2; }
+  .i-jar{ order:1; width:92%; max-width:none; align-self:flex-end;
+    margin:-7cqw -7.143% 6cqw 0; }
+  .e-sup-i1h,.e-sup-i2h{ margin-bottom:1em; }
+  .e-sup-i1b,.e-sup-i2b{ margin-bottom:1.4em; }
+  .e-sup-i1l{ margin-bottom:6cqw; }
+
+  /* ===================  FOOTER  =================== */
+  .i-foot-logo{ width:180px; margin-bottom:4cqw; }
+  .m-foot-row{ display:flex; align-items:center; gap:16px; margin-bottom:3cqw; }
+  .i-foot-chest{ height:38px; width:auto; }
+  .i-foot-swd{ height:40px; width:auto; }
+  .e-foot-swd-t{ font-size:11px; line-height:1.2; width:auto; }
+  .e-foot-copy{ font-size:13px; }
+}
+
+/* =================================================================
+   TIER M — restore SIDE-BY-SIDE composition (1024–1439px only)
+   At laptop widths there's room for 2 columns, so the wrapper divs
+   (inert/display:contents elsewhere) become grids: the hero, the two
+   service cards and the support block go side-by-side again — keeping
+   the magazine composition while the section height still flows. The
+   narrower S tier (768–1023) stays single-column from the flow block.
    ================================================================= */
 @media (min-width:1024px) and (max-width:1439px){
-  /* ---- LANDING ---- */
-  .e-wecare{ left:6.25%; }
-  .e-intro-sub{ left:6.25%; font-size:18px; }
-  .e-intro-b1{ left:6.25%; width:38%; font-size:14.5px; }
-  .e-intro-div{ left:6.25%; width:38%; }
-  .e-stat1n{ left:6.2%; }     .e-stat1l{ left:6.2%;  font-size:13px; }
-  .e-stat2n{ left:18.2%; }    .e-stat2l{ left:18.2%; font-size:13px; }
-  .e-stat3n{ left:26.5%; }    .e-stat3l{ left:26.5%; font-size:13px; }
-  .e-intro-b2{ left:6.25%; width:46%; font-size:14.5px; }
-  .e-intro-about{ left:6.25%; top:62%; font-size:14px; }   /* pushed down: bigger body needs room */
-  .e-wl-tag,.e-wl-tag2{ font-size:18px; }
-  .e-wl-body{ width:33%; font-size:14.5px; }
-  .e-wl-link{ top:91%; font-size:14px; }
 
-  /* ---- SERVICES (followers pushed below the 2-line stepped body) ---- */
-  .e-svc-label{ font-size:14px; }
-  .e-c1-h,.e-c2-h{ font-size:19px; }
-  .e-c1-b{ width:40%; font-size:14.5px; }
-  .e-c1-s1,.e-c1-s2,.e-c1-s3{ top:37%; }
-  .e-c1-star{ top:38.5%; font-size:13px; }
-  .e-c1-l1,.e-c1-l2,.e-c1-l3{ top:40.5%; font-size:11px; }
-  .i-svc-family{ top:39.5%; }
-  .e-c1-link{ top:44.5%; font-size:14px; }
-  .e-c2-b{ width:40%; font-size:14.5px; }
-  .e-c2-s1{ top:69.5%; }
-  .e-c2-tag{ top:71%; font-size:16px; }
-  .e-c2-l1{ top:73%; font-size:11px; }
-  .e-c2-link{ top:76%; font-size:14px; }
+  /* ---- LANDING : hero (we care | hand), hand bleeds off the right ---- */
+  .l-hero{ display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
+    align-items:center; column-gap:var(--gutter); margin-bottom:4cqw; width:100%; }
+  .e-wecare{ font-size:8.8cqw; }            /* fit the half-width column */
+  .i-hero-hand{ width:112%; max-width:none; align-self:center; justify-self:end;
+    margin:0 -14.3% 0 0; }                  /* -14.3% of the half col = the 6.25% page margin */
+  .l-cols{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);
+    column-gap:8cqw; align-items:start; margin-bottom:0; width:100%; }
+  .l-intro,.l-society{ display:flex; flex-direction:column; align-items:flex-start; }
+  .l-society{ margin-top:9cqw; }            /* society block sits lower, per the design diagonal */
+  .e-intro-div,.sans{ max-width:none; }     /* boxes are the grid column now */
+  /* lockup shrinks to fit the half column, keeps its stagger */
+  .m-wl-typo .disp{ font-size:7cqw; }
+  .e-wl-the{ font-size:2.9cqw; }
+  .wl-row2{ margin-left:7.5cqw; }
+  /* hands sit lower-LEFT and bleed off the left edge, as on desktop */
+  .i-hands{ width:42%; align-self:flex-start; margin:-8cqw 0 0 -7.143%; }
 
-  /* ---- SUPPORT (taller canvas + wider body so it stays 2 lines) ---- */
-  .sec--support .sec__inner{ aspect-ratio:1920/1020; }
-  .e-sup-label{ font-size:14px; }
-  .e-sup-i1h,.e-sup-i2h{ font-size:19px; }
-  .e-sup-i1b{ width:44%; font-size:14.5px; }
-  .e-sup-i1l{ top:43%; font-size:14px; }
-  .e-sup-i2b{ width:44%; font-size:14.5px; }
-  .e-sup-i2l{ top:72%; font-size:14px; }
+  /* ---- SERVICES : each card photo | text side-by-side ---- */
+  .s-card{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);
+    column-gap:5cqw; align-items:center; margin-bottom:8cqw; width:100%; }
+  .s-card__body{ display:flex; flex-direction:column; align-items:flex-start; }
+  .s-card--rev .i-photo-cycling{ order:2; }   /* card 2 reads text | photo */
+  .s-card--rev .s-card__body{ order:1; }
+  .i-photo-kids,.i-photo-cycling{ width:100%; max-width:none; margin:0; }
+  .e-c1-link,.e-c2-link{ margin-bottom:0; }
+  .i-svc-family,.i-svc-bike{ margin-bottom:2cqw; }
 
-  /* ---- FOOTER ---- */
-  .e-foot-copy{ font-size:13px; }
-  .e-foot-swd-t{ font-size:11px; }
+  /* ---- SUPPORT : items LEFT | "Support us" + jar RIGHT (as designed).
+     The wrappers are display:contents, so the grid is laid on .sec__inner
+     itself and each piece is placed into it. ---- */
+  .sec--support .sec__inner{ display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);
+    grid-template-rows:auto auto auto auto; column-gap:4cqw; align-items:start; }
+  .e-sup-label{ grid-column:1/-1; justify-self:center; margin-bottom:4cqw; }
+  .sup-items{ display:flex; flex-direction:column; align-items:flex-start;
+    grid-column:1; grid-row:2/span 3; align-self:center; }
+  .e-sup-support{ grid-column:2; grid-row:2; }
+  .e-sup-us{ grid-column:2; grid-row:3; }
+  .i-jar{ grid-column:2; grid-row:4; width:120%; max-width:none;
+    justify-self:end; align-self:start; margin:-6cqw -14.3% 0 0; }
+  .e-sup-i2l{ margin-bottom:0; }
 }
 
 /* =================================================================
@@ -374,61 +516,6 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
 }
 
 /* =================================================================
-   TIER S — TABLET (768–1023px) · 6 columns
-   Same strategy as M but with slightly larger type (the canvas is
-   narrower) and wider text boxes. Composition still side-by-side here;
-   it only stacks to a single column at the mobile tier (≤767).
-   ================================================================= */
-@media (min-width:768px) and (max-width:1023px){
-  /* taller service / support canvases so the 3-line stepped bodies fit
-     without colliding with the stats / buttons below them */
-  .sec--services .sec__inner{ aspect-ratio:1920/2000; }
-  .sec--support  .sec__inner{ aspect-ratio:1920/1450; }
-
-  /* ---- LANDING ---- */
-  .e-wecare{ left:6.25%; }
-  .e-intro-sub{ left:6.25%; font-size:18px; }
-  .e-intro-b1{ left:6.25%; width:42%; font-size:15px; }
-  .e-intro-div{ left:6.25%; width:42%; }
-  .e-stat1n{ left:6.2%; }     .e-stat1l{ left:6.2%;  font-size:13px; }
-  .e-stat2n{ left:19%; }      .e-stat2l{ left:19%;   font-size:13px; }
-  .e-stat3n{ left:28%; }      .e-stat3l{ left:28%;   font-size:13px; }
-  .e-intro-b2{ left:6.25%; top:56%; width:50%; font-size:15px; }
-  .e-intro-about{ left:6.25%; top:65%; font-size:14px; }
-  .e-wl-tag,.e-wl-tag2{ font-size:17px; }
-  .e-wl-body{ width:36%; font-size:15px; }
-  .e-wl-link{ top:94%; font-size:14px; }
-
-  /* ---- SERVICES ---- */
-  .e-svc-label{ font-size:14px; }
-  .e-c1-h,.e-c2-h{ font-size:19px; }
-  .e-c1-b{ width:40%; font-size:15px; }
-  .e-c1-s1,.e-c1-s2,.e-c1-s3{ top:40%; }
-  .e-c1-star{ top:41.5%; font-size:13px; }
-  .e-c1-l1,.e-c1-l2,.e-c1-l3{ top:43.5%; font-size:11px; }
-  .i-svc-family{ top:42%; }
-  .e-c1-link{ top:47%; font-size:14px; }
-  .e-c2-b{ width:40%; font-size:15px; }
-  .e-c2-s1{ top:73%; }
-  .e-c2-tag{ top:74.5%; font-size:16px; }
-  .e-c2-l1{ top:76.5%; font-size:11px; }
-  .e-c2-link{ top:79.5%; font-size:14px; }
-  .i-svc-bike{ top:83%; }
-
-  /* ---- SUPPORT ---- */
-  .e-sup-label{ font-size:14px; }
-  .e-sup-i1h,.e-sup-i2h{ font-size:19px; }
-  .e-sup-i1b{ width:38%; font-size:15px; }
-  .e-sup-i1l{ top:45%; font-size:14px; }
-  .e-sup-i2b{ width:38%; font-size:15px; }
-  .e-sup-i2l{ top:74%; font-size:14px; }
-
-  /* ---- FOOTER ---- */
-  .e-foot-copy{ font-size:13px; }
-  .e-foot-swd-t{ font-size:11px; }
-}
-
-/* =================================================================
    MOBILE  (≤767px) — TRUE responsive reflow, not a scaled canvas.
    Each section drops its frozen 1920 aspect-ratio canvas and becomes a
    normal single-column flow (20px side margins, per the mobile grid).
@@ -447,7 +534,7 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
   /* aspect-ratio:auto must be set at this specificity (0,2,0) to beat the
      desktop per-section aspect-ratio rules — otherwise the canvas height
      stays frozen and overflow:hidden clips all the reflowed content. */
-  .sec--landing  .sec__inner{ aspect-ratio:auto; padding-top:96px;  padding-bottom:0; }
+  .sec--landing  .sec__inner{ aspect-ratio:auto; padding-top:56px;  padding-bottom:0; }
   .sec--services .sec__inner{ aspect-ratio:auto; padding-top:40px;  padding-bottom:48px; }
   .sec--support  .sec__inner{ aspect-ratio:auto; padding-top:40px;  padding-bottom:56px; }
   .sec--footer   .sec__inner{ aspect-ratio:auto; padding-top:40px;  padding-bottom:32px; }
@@ -457,13 +544,22 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
     width:auto; max-width:100%; transform:none; line-height:1.2; }
   .img{ position:static; left:auto; top:auto; width:auto; transform:none; }
 
-  /* hide desktop background blobs (mobile uses flat section colour) */
-  .bleed,.i-color4,.i-color5,.i-earth{ display:none; }
+  /* background blobs stay on mobile too (per the mobile design frame);
+     re-assert absolute (the generic .img{position:static} below would
+     otherwise pull them into the flow) and re-pin to the flowed heights */
+  .i-earth{ display:none; }
+  .sec--landing .bleed .img,.sec--services .bleed .img{ position:absolute; }
+  .i-color3{ left:0; top:-1%; width:170%; }
+  .i-color1{ left:-38%; top:20%; width:95%; }
+  .i-color2{ left:42%; top:78%; width:95%; }
+  .i-color5{ left:0; top:80%; width:160%; }
+  .i-color4{ left:62%; top:42%; width:70%; }
 
-  /* hero sparkles / heart stay as small absolute accents (out of flow) */
-  .i-star1{ position:absolute; right:26px;  top:124px; width:26px; z-index:4; }
-  .i-star2{ position:absolute; left:24px;   top:300px; width:32px; z-index:4; }
-  .i-heart{ position:absolute; right:60px;  top:150px; width:30px; z-index:4; }
+  /* hero sparkles / heart pinned per the mobile frame (75:1069):
+     star_01 left of "we", heart right of "care.", star_02 bleeds right */
+  .i-star1{ position:absolute; left:10vw;  top:25vw;  width:11vw; z-index:4; }
+  .i-star2{ position:absolute; right:-4vw; top:160vw; width:11vw; left:auto; z-index:4; }
+  .i-heart{ position:absolute; right:10vw; top:44vw;  width:12vw; z-index:4; }
 
   /* ---- NAV : logo + hamburger ---- */
   .nav{ display:block; }   /* desktop makes .nav a centring flex row; stack on mobile */
@@ -503,39 +599,46 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
   .m-stat .ming{ font-size:12px; letter-spacing:.04em; opacity:.85; }
 
   /* =====================  LANDING  ===================== */
-  .e-wecare{ order:1; font-size:80px; line-height:1.0; width:min-content;
-    margin-bottom:8px; }
-  .i-hero-hand{ order:2; width:100%; max-width:360px; align-self:center;
-    margin:4px auto 28px; }
+  /* hero per the mobile frame: the hand graphic is a huge (205vw) backdrop
+     bleeding BOTH edges, with "we / care." stacked+centred overlaid top-right */
+  .l-hero{ display:block; position:relative; order:1;
+    width:calc(100% + 40px); margin:0 -20px 20px; }
+  .i-hero-hand{ display:block; width:205%; max-width:none;
+    margin:0 0 0 -38%; }
+  .e-wecare{ position:absolute; top:12vw; right:24vw; z-index:3;
+    width:min-content; text-align:center;
+    font-size:20.5vw; line-height:.74; margin:0; }
   .e-intro-sub{ order:3; font-size:24px; margin-bottom:14px; }
   .e-intro-b1{ order:4; margin-bottom:22px; }
   .e-intro-div{ order:5; position:static; width:100%; margin-bottom:22px; }
-  /* landing stats: 68,000+ is wide, so size columns to content and shrink
-     the figures a touch so all three fit the row */
+  /* landing stats: sized per the mobile frame (~44px figures) */
   .m-stats{ order:6; margin-bottom:24px; justify-content:space-between; gap:10px; }
   .m-stats .m-stat{ flex:0 1 auto; }
-  .m-stats .num{ font-size:32px; }
+  .m-stats .num{ font-size:min(10vw,44px); }
   .e-intro-b2{ order:7; margin-bottom:18px; }
   .e-intro-about{ order:8; margin-bottom:56px; }
 
-  .m-wl-typo{ order:9; display:block; position:relative; width:100%;
-    height:190px; margin-bottom:8px; }
-  .m-wl-typo .disp{ position:absolute; font-size:72px; line-height:1; }
-  .e-wl-we{ left:0; top:0; }
-  .e-wl-love{ left:90px; top:0; }
-  .e-wl-the{ left:74px; top:84px; font-size:26px; font-style:italic; }
-  .e-wl-society{ left:50px; top:58px; }
+  /* staggered "we love / the society" lockup, per the mobile frame:
+     starts at x83/440, ~94px type, "society" crops off the right edge */
+  .m-wl-typo{ order:9; display:flex; flex-direction:column; width:auto;
+    max-width:none; align-self:stretch; margin:0 -20px 10px 14vw; }
+  .wl-row1{ display:flex; align-items:baseline; gap:3.5vw; }
+  .wl-row2{ display:flex; align-items:baseline; gap:2.2vw; margin:-3.5vw 0 0 17vw; }
+  .m-wl-typo .disp{ position:static; font-size:15vw; line-height:1.08;
+    white-space:nowrap; max-width:none; }
+  .e-wl-the{ font-size:6vw; font-style:italic; }
   .m-tags{ order:10; display:flex; gap:6px; flex-wrap:wrap;
     margin-bottom:18px; }
   .m-tags .ming{ font-size:22px; letter-spacing:.04em; }
   .e-wl-body{ order:11; margin-bottom:18px; }
   .e-wl-link{ order:12; margin-bottom:40px; }
-  .i-hands{ order:13; width:64%; align-self:center; margin-top:8px; }
+  /* hands bleed slightly off the right edge, per the mobile design (302/440) */
+  .i-hands{ order:13; width:69%; align-self:flex-end; margin:8px -12px 0 0; }
 
   /* =====================  SERVICES  ===================== */
   .e-svc-label{ order:1; margin-bottom:24px; }
   .e-our{ order:2; font-size:64px; }
-  .e-services{ order:3; font-size:64px; margin-bottom:40px; }
+  .e-services{ order:3; font-size:64px; margin:0 0 40px 34px; }  /* staggered indent */
 
   .i-photo-kids{ order:4; width:100%; height:auto; aspect-ratio:400/256;
     object-fit:cover; border-radius:12px; margin-bottom:28px; }
@@ -543,8 +646,8 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
   .e-c1-b{ order:6; margin-bottom:24px; }
   .m-c1-stats{ order:7; margin-bottom:20px; }
   .e-c1-star{ font-size:16px!important; }
-  .i-svc-family{ order:8; width:78%; margin:0 0 18px; }
-  .e-c1-link{ order:9; margin-bottom:64px; }
+  .e-c1-link{ order:8; margin-bottom:18px; }   /* link BEFORE the doodle, per design */
+  .i-svc-family{ order:9; width:78%; align-self:flex-end; margin:0 0 64px; }
 
   .i-photo-cycling{ order:10; width:100%; height:auto; aspect-ratio:400/256;
     object-fit:cover; border-radius:12px; margin-bottom:28px; }
@@ -553,8 +656,8 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
   .m-c2-meta{ order:13; display:flex; align-items:flex-end; gap:28px;
     margin-bottom:20px; }
   .m-c2-meta .e-c2-tag{ font-size:22px; }
-  .i-svc-bike{ order:14; width:70%; margin:0 0 18px; }
-  .e-c2-link{ order:15; }
+  .e-c2-link{ order:14; margin-bottom:18px; }  /* link BEFORE the doodle, per design */
+  .i-svc-bike{ order:15; width:70%; align-self:flex-end; margin:0; }
 
   /* =====================  SUPPORT  ===================== */
   .e-sup-label{ order:1; margin-bottom:24px; }
@@ -562,8 +665,9 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
   .e-sup-support{ order:2; font-size:64px; }
   .e-sup-us{ order:3; font-size:64px; margin-bottom:12px; }
   .sec--support .bleed--front,.sec--support .bleed__canvas{ display:contents; }
-  .i-jar{ order:4; position:static; width:100%; max-width:420px;
-    align-self:center; margin:0 auto 36px; }
+  /* jar + arm bleed off the right edge, tucked up beside "us" */
+  .i-jar{ order:4; position:static; width:108%; max-width:none;
+    align-self:flex-end; margin:-10px -20px 36px 0; }
   .e-sup-i1h{ order:5; font-size:26px; margin-bottom:16px; }
   .e-sup-i1b{ order:6; margin-bottom:18px; }
   .e-sup-i1l{ order:7; margin-bottom:40px; }
@@ -571,13 +675,17 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
   .e-sup-i2b{ order:9; margin-bottom:18px; }
   .e-sup-i2l{ order:10; }
 
-  /* =====================  FOOTER  ===================== */
-  .i-foot-logo{ order:1; width:200px; margin-bottom:40px; }
-  .m-foot-row{ order:2; display:flex; align-items:center; gap:14px;
-    margin-bottom:28px; }
-  .i-foot-chest{ height:36px; width:auto; }
-  .i-foot-swd{ height:38px; width:auto; }
-  .e-foot-swd-t{ font-size:11px; line-height:1.2; width:auto;
+  /* =====================  FOOTER  =====================
+     per the mobile frame 75:2551 (440×359): logo 231px wide at y58,
+     partners at y213 with a wide gap, copyright at y281 */
+  .sec--footer .sec__inner{ padding-top:58px; padding-bottom:60px; }
+  .i-foot-logo{ order:1; width:52.5%; max-width:231px; margin-bottom:52px; }
+  .m-foot-row{ order:2; display:flex; align-items:center; gap:0;
+    margin-bottom:30px; width:100%; max-width:264px; }
+  .i-foot-chest{ height:37px; width:auto; }
+  .i-foot-swd{ height:39px; width:auto; margin-left:auto; }
+  .e-foot-swd-t{ font-size:10px; line-height:1.2; width:auto; margin-left:8px;
+    flex:0 0 auto; white-space:nowrap;
     text-transform:uppercase; letter-spacing:.02em; }
   .e-foot-copy{ order:3; font-size:11px; color:#000; }
 }
