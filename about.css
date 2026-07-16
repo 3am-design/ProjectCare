@@ -406,8 +406,26 @@
   .member-card b{ font-size:15px; }
   .member-card i{ font-size:12px; }
   .staff-grid{ grid-template-columns:1fr; row-gap:26px; }
-  /* pinned both axes for Safari (see the M/S-tier note above); 820×1080/1512 */
-  .chart{ font-size:10px; width:820px; min-width:820px; height:586px; aspect-ratio:auto; }
+  /* mobile: the 1512×1080 canvas is unreadable on a phone even with
+     horizontal scroll — reflow to a stacked column instead. Boxes are
+     re-grouped by branch via flex order (DOM order interleaves the two
+     branches); children indent under their parent; the connector SVG
+     only makes sense on the 2D canvas, so it's dropped. */
+  .chart{ width:100%; min-width:0; height:auto; aspect-ratio:auto; font-size:13px;
+    display:flex; flex-direction:column; gap:10px; }
+  .chart__lines{ display:none; }
+  .cbox,.chome{ position:static; width:auto; height:auto; }
+  .cbox{ padding:13px 16px; border-radius:12px; }
+  .cbox--exec{ order:1; }
+  .cbox--lav{ order:2; }              /* 服務總監 + 副服務總監 (DOM order kept within) */
+  .cbox--green{ order:3; }
+  .cbox--mint{ order:4; margin-left:24px; }    /* 行政支援 branch */
+  .cbox--orange{ order:5; }
+  .cbox--peach{ order:6; margin-left:24px; }   /* 兒童之家 branch */
+  .chome{ order:7; margin-left:24px; border-radius:14px; padding:14px 16px 16px;
+    font-size:13px; }   /* base .chome carries its own .781cqw font-size — ~3px on mobile (no container) */
+  .chome__chips{ position:static; margin-top:10px; display:flex; gap:8px; }
+  .chome__chips span{ border-radius:8px; padding:6px 0; }
   .cmte-h{ font-size:17px; margin:6px 0 18px; }
   .cmte-grid{ grid-template-columns:1fr; row-gap:14px; }
   .cmte-card{ min-height:96px; border-radius:16px; }
