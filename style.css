@@ -468,7 +468,7 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
   /* ---- LANDING : hero (we care | hand), hand bleeds off the right ---- */
   .l-hero{ display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
     align-items:center; column-gap:var(--gutter); margin-bottom:4cqw; width:100%; }
-  .e-wecare{ font-size:8.8cqw; }            /* fit the half-width column */
+  .e-wecare{ font-size:12.9cqw; }           /* stronger in the half-width laptop column */
   .i-hero-hand{ width:112%; max-width:none; align-self:center; justify-self:end;
     margin:0 -14.3% 0 0; }                  /* -14.3% of the half col = the 6.25% page margin */
   .l-cols{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);
