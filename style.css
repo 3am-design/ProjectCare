@@ -647,10 +647,12 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
   .nav__mobile{ position:fixed; z-index:1; inset:0; display:flex; flex-direction:column;
     justify-content:flex-start; gap:17px; margin:0; padding:166px 32px 0; background:var(--blue);
     clip-path:circle(0px at var(--mnav-x, calc(100% - 37px)) var(--mnav-y, 31px));
-    transition:clip-path .65s cubic-bezier(.55,.055,.675,.19);
+    visibility:hidden;   /* fully gone when closed — clip-path alone left the blue layer "present", tinting iOS Safari's toolbar blue after the menu closed (and links stayed tabbable) */
+    transition:clip-path .65s cubic-bezier(.55,.055,.675,.19), visibility 0s .65s;
     pointer-events:none; }
   .nav--open .nav__mobile{
     clip-path:circle(150% at var(--mnav-x, calc(100% - 37px)) var(--mnav-y, 31px));
+    visibility:visible; transition:clip-path .65s cubic-bezier(.55,.055,.675,.19), visibility 0s 0s;
     pointer-events:auto; }
   /* thinner weight (300, no divider lines between items (user feedback 2026-07-16);
      +20% size (was 26px) */

@@ -54,7 +54,7 @@
 /* date | category row (shared featured + cards) */
 .n-meta{ display:flex; align-items:center; gap:.81cqw;
   font:400 .729cqw/1.7 "Inter","Noto Sans HK",sans-serif; color:#000; }
-.n-meta__sep{ width:1px; height:.729cqw; background:#000; }
+.n-meta__sep{ width:1px; height:1em; background:#000; }   /* 1em tracks the tier font sizes (.729cqw at desktop ≡ 1em); px overrides in the tiers stay consistent */
 
 /* ---- 3×3 card grid ---- */
 .n-grid{ position:absolute; left:10.625%; right:10.625%; top:49.95cqw; z-index:3;
@@ -83,7 +83,10 @@
 .n-pager__btn:hover{ background:var(--navy); color:#fff; }
 .n-pager__num{ display:flex; align-items:center; gap:.81cqw;
   font:400 .729cqw/1 "Inter",sans-serif; color:#000; }
-.n-pager__num .n-meta__sep{ height:.72cqw; }
+/* (removed .n-pager__num .n-meta__sep{height:.72cqw} — its 0,2,0 specificity
+   beat every tier's .n-meta__sep px override, and cqw collapses to ~3px on
+   mobile where .sec__inner drops container-type, so the pager's "/" separator
+   rendered as a dot; base 1em now covers the pager too) */
 
 /* =================================================================
    DETAIL (news-detail.html) — white-on-cream FLOW section (article

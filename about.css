@@ -314,7 +314,10 @@
   .member-card b{ font-size:16px; }
   .member-card i{ font-size:13px; }
   .member-card{ border-radius:14px; padding:16px 18px 16px 28px; }
-  .chart{ font-size:11px; min-width:900px; }
+  /* explicit width+height (900×1080/1512): Safari resolves aspect-ratio
+     against the pre-min-width 100% width inside the overflow-x scroller,
+     stretching the chart vertically — pin both axes instead */
+  .chart{ font-size:11px; width:900px; min-width:900px; height:643px; aspect-ratio:auto; }
   .cmte-h{ font-size:19px; margin:2cqw 0 3cqw; }
   .cmte-role{ font-size:11px; }
   .cmte-card b{ font-size:16px; }
@@ -381,7 +384,9 @@
     padding-left:20px; scroll-padding-left:20px; }
   .a-tl__card{ width:66vw; height:68vw; border-radius:16px; scroll-snap-align:start; }
   .a-tl__year{ font-size:30px; margin:26px 0 0 24px; }
-  .a-tl__body{ font-size:13px; line-height:1.75; margin:12px 26px 0 24px; }
+  /* width:auto beats style.css's mobile .sans{width:100%} (same specificity,
+     this file loads later) — 100% + side margins overflowed the card */
+  .a-tl__body{ width:auto; font-size:13px; line-height:1.75; margin:12px 26px 0 24px; }
   .a-para{ order:10; margin-bottom:26px; }
   .a-photo{ order:11; width:100%; border-radius:12px; margin-bottom:26px; }
   .a-tagline{ order:12; position:static; flex-wrap:wrap; gap:4px 0; margin-bottom:16px; }
@@ -401,7 +406,8 @@
   .member-card b{ font-size:15px; }
   .member-card i{ font-size:12px; }
   .staff-grid{ grid-template-columns:1fr; row-gap:26px; }
-  .chart{ font-size:10px; min-width:820px; }
+  /* pinned both axes for Safari (see the M/S-tier note above); 820×1080/1512 */
+  .chart{ font-size:10px; width:820px; min-width:820px; height:586px; aspect-ratio:auto; }
   .cmte-h{ font-size:17px; margin:6px 0 18px; }
   .cmte-grid{ grid-template-columns:1fr; row-gap:14px; }
   .cmte-card{ min-height:96px; border-radius:16px; }

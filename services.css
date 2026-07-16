@@ -359,7 +359,9 @@
     margin:0 -20px 34px; padding-left:20px; scroll-padding-left:20px; }
   .p-app__card{ width:66vw; height:68vw; border-radius:16px; }
   .p-app__num{ font-size:30px; margin:26px 0 0 24px; }
-  .p-app__body{ font-size:13px; line-height:1.75; margin:12px 26px 0 24px; }
+  /* width:auto beats style.css's mobile .sans{width:100%} (same specificity,
+     this file loads later) — 100% + side margins overflowed the card */
+  .p-app__body{ width:auto; font-size:13px; line-height:1.75; margin:12px 26px 0 24px; }
   .p-unit-l{ order:21; font-size:22px; margin-bottom:12px; }
   .p-unit-b{ order:22; font-size:13px; width:100%; margin-bottom:16px; }
   .p-units{ order:23; position:static; flex-wrap:wrap; gap:10px; }
