@@ -29,15 +29,32 @@
   });
 })();
 
-// Mobile nav — hamburger toggles the dropdown panel.
+// Mobile nav — hamburger toggles a full-screen panel that radiates out from
+// the hamburger's own screen position (circle clip-path, see style.css).
 (function () {
   var header = document.querySelector('.nav');
   var burger = document.querySelector('.nav__burger');
+  var mobile = document.querySelector('.nav__mobile');
   if (!header || !burger) return;
-  function close() { header.classList.remove('nav--open'); burger.setAttribute('aria-expanded', 'false'); }
+  function placeOrigin() {
+    if (!mobile) return;
+    var r = burger.getBoundingClientRect();
+    mobile.style.setProperty('--mnav-x', (r.left + r.width / 2) + 'px');
+    mobile.style.setProperty('--mnav-y', (r.top + r.height / 2) + 'px');
+  }
+  function close() {
+    header.classList.remove('nav--open');
+    burger.setAttribute('aria-expanded', 'false');
+    document.documentElement.classList.remove('nav-lock');
+    document.body.classList.remove('nav-lock');
+  }
   burger.addEventListener('click', function () {
-    var open = header.classList.toggle('nav--open');
-    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    var open = header.classList.contains('nav--open');
+    if (!open) placeOrigin();   // measure before revealing, so the circle starts exactly at the icon
+    header.classList.toggle('nav--open');
+    burger.setAttribute('aria-expanded', open ? 'false' : 'true');
+    document.documentElement.classList.toggle('nav-lock', !open);
+    document.body.classList.toggle('nav-lock', !open);
   });
   // close after tapping a link in the mobile panel
   document.querySelectorAll('.nav__mobile a').forEach(function (a) {
@@ -237,7 +254,7 @@ document.querySelectorAll('img.photo, img.n-card__img, img.n-feat__img').forEach
   });
 
   var doodles = [];
-  document.querySelectorAll('.i-star1,.i-star2,.i-heart,.i-earth,.a-earth,.n-doodle,.i-svc-family,.i-svc-bike,.s-hands').forEach(function (el, i) {
+  document.querySelectorAll('.i-star1,.i-star2,.i-heart,.i-earth,.a-earth,.n-doodle,.i-svc-family,.i-svc-bike,.s-hands,.i-supjar').forEach(function (el, i) {
     doodles.push({
       el: el, active: false, phase: i * 1.71,
       pointer: (14 + (i % 4) * 7) * (i % 2 ? -1 : 1),

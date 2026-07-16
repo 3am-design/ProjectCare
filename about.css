@@ -170,7 +170,8 @@
 .staff-col .role-label{ margin:0; }
 
 /* ---- tab 1 : 管理架構 (org chart) ---- */
-.chart-scroll{ width:100%; overflow-x:auto; }
+.chart-scroll{ width:100%; overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:none; }
+.chart-scroll::-webkit-scrollbar{ display:none; }
 .chart{ position:relative; width:100%; min-width:760px; aspect-ratio:1512/1080;
   font-size:.781cqw; }
 .chart__lines{ position:absolute; inset:0; width:100%; height:100%; }

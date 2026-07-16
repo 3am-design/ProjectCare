@@ -24,7 +24,7 @@
 /* jar: a .sec__inner child (so it can join the mobile flow), absolute on
    the canvas; its right edge runs past 1920 (hand/arm bleeds at the
    viewport edge, needs the overflow:visible above) */
-.i-supjar{ left:57%; top:8%; width:70%; z-index:2; }  /* re-nudged 2026-07-15 after arm-extend re-export changed the svg's viewBox/aspect ratio */
+.i-supjar{ left:57%; top:12.39%; width:70%; z-index:2; }  /* re-nudged 2026-07-15 after arm-extend re-export changed the svg's viewBox/aspect ratio; +80px (canvas height 1820.5) 2026-07-16 */
 
 /* =================================================================
    HERO (left column)
@@ -84,8 +84,9 @@
   .su-blob-yellow{ left:-30%; top:-14cqw; width:75%; }
   .su-blob-peach{ left:40%; top:14cqw; width:72%; }
   .su-blob-white{ left:40%; top:95cqw; width:95%; }
-  /* jar pinned top-right (like the services hands / about earth), text flows past */
-  .i-supjar{ position:absolute; left:auto; right:-8%; top:14cqw; width:62%; }
+  /* jar pinned top-right (like the services hands / about earth), text flows past —
+     shrunk 2026-07-16 (user feedback: arm read as too long) */
+  .i-supjar{ position:absolute; left:auto; right:-8%; top:14cqw; width:48%; }
 
   .su-label{ position:static; font-size:18px; letter-spacing:.12em; margin-bottom:1.2em; }
   .su-title{ position:static; margin-bottom:.4em; }
@@ -123,8 +124,11 @@
    would sit on the full-width pills), panel illustration stacks above */
 @media (min-width:768px) and (max-width:1023px){
   .sec--sup .sec__inner{ padding-top:14cqw; }
-  .i-supjar{ position:static; width:82%; max-width:none; align-self:flex-end;
-    margin:-4cqw -6.25vw 3cqw 0; }
+  /* shrunk + pulled further right 2026-07-16 (user feedback: arm read as too
+     long, wanted a clean bleed to the true right edge) — the extra overshoot
+     in the negative margin is harmless, .sec clips flush at the viewport edge */
+  .i-supjar{ position:static; width:64%; max-width:none; align-self:flex-end;
+    margin:-4cqw -14vw 3cqw 0; }
   .su-panel{ padding:0 0 4cqw; background:none; border-radius:0; min-height:0; }
   .su-family{ position:static; width:100%; height:auto; border-radius:16px; margin-bottom:3cqw; }
   .su-vol-h,.su-vol-b,.su-vol-l{ margin-left:0; }
@@ -141,13 +145,16 @@
   .su-blob-yellow{ left:-40%; top:-20vw; width:110%; }
   .su-blob-peach{ left:30%; top:30vw; width:110%; }
   .su-blob-white{ left:10%; top:260vw; width:150%; }
-  /* the jar (a .sec__inner child) flows between title and intro —
-     centred, tighter top/bottom gaps (user 2026-07-14) */
-  .i-supjar{ position:static; order:3; width:104%; max-width:none;
-    align-self:center; margin:-6vw 0 0; }
+  /* the jar (a .sec__inner child) flows between title and intro — bled to the
+     right edge rather than centred, and shrunk (user feedback 2026-07-16:
+     centred+104% read as the arm being too long / bleeding both sides) */
+  .i-supjar{ position:static; order:3; width:84%; max-width:none;
+    align-self:flex-end; margin:-6vw -10vw 3cqw 0; }
 
   .su-label{ position:static; order:1; font-size:24px; margin-bottom:18px; }
-  .su-title{ position:static; order:2; font-size:15vw; margin-bottom:2vw; }
+  /* fixed px + max-width (not 15vw) so "support us" reliably wraps to two
+     lines instead of overflowing the viewport — same fix as about.css .a-title */
+  .su-title{ position:static; order:2; font-size:56px; max-width:65%; margin-bottom:16px; }
   .su-intro{ position:static; order:4; font-size:13px; width:100%; margin-bottom:26px; }
   .su-don-h{ position:static; order:5; font-size:22px; margin-bottom:12px; }
   .su-don-b{ position:static; order:6; font-size:13px; width:100%; margin-bottom:16px; }
