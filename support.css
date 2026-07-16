@@ -1,0 +1,176 @@
+/* =================================================================
+   Project Care — Support page (04_Support, Figma frame 1:2883)
+   Loads AFTER style.css and reuses its system: fixed 1920 canvas,
+   .sec__inner container-query context, cqw sizing, type roles.
+   ONE cream absolute canvas section (1920 × 1820.5 — the frame minus
+   the 315px footer) + the standard footer. Background blobs and the
+   jar illustration are FULL shapes in the shared .bleed layer so they
+   hold the 1920 grid and bleed past it above 1920px.
+   Typography follows the html convention (index/about/services roles),
+   not the raw Figma sizes.
+   ================================================================= */
+
+.sec--sup{ background:var(--cream); }
+/* overflow:visible so the jar illustration (a .sec__inner child, holding
+   the 1920 grid) can bleed past the canvas box above 1920px viewports —
+   .sec/.stage still clip at the true viewport edge */
+.sec--sup .sec__inner{ aspect-ratio:1920/1820.5; overflow:visible; }
+
+/* ---- background blobs + jar (full shapes; positions from the Figma
+   exports' frame coordinates; tops in cqw so they track the canvas) ---- */
+.su-blob-yellow{ left:-19.34%; top:-9.27cqw; width:57.25%; }  /* top-left, bleeds off-canvas */
+.su-blob-peach { left:46.7%;   top:17.21cqw; width:56.7%;  }  /* right, behind the jar */
+.su-blob-white { left:52.42%;  top:70.51cqw; width:74.62%; }  /* bottom-right glow */
+/* jar: a .sec__inner child (so it can join the mobile flow), absolute on
+   the canvas; its right edge runs past 1920 (hand/arm bleeds at the
+   viewport edge, needs the overflow:visible above) */
+.i-supjar{ left:57%; top:8%; width:70%; z-index:2; }  /* re-nudged 2026-07-15 after arm-extend re-export changed the svg's viewBox/aspect ratio */
+
+/* =================================================================
+   HERO (left column)
+   ================================================================= */
+.su-label{ left:10.417%; top:10.98%; font-size:1.302cqw; letter-spacing:.1em; }
+/* one-line display — the index "support us" scale (8.333cqw), same as
+   the services page title */
+.su-title{ left:10.26%; top:13.24%; font-size:8.333cqw; font-weight:600; line-height:1.33; }
+.su-intro{ left:10.625%; top:25.6%; width:32%; font-size:.781cqw; }
+
+.su-don-h{ left:10.57%; top:29.82%; font-size:1.51cqw; }
+.su-don-b{ left:10.625%; top:32.13%; width:32%; font-size:.781cqw; }
+
+/* ---- 捐款方法 white pill rows ---- */
+.su-pills{ position:absolute; left:10.625%; top:34.06%; width:38.7%; z-index:3;
+  display:flex; flex-direction:column; gap:.729cqw; }   /* 620/737/857 → 14px gaps */
+.su-pill{ position:relative; height:5.365cqw; background:#fff;
+  border-radius:1.5625cqw; }
+.su-pill__icon{ position:absolute; left:1.7cqw; top:50%; transform:translateY(-50%);
+  width:2.25cqw; height:1.95cqw; display:flex; align-items:center; justify-content:center; }
+.su-pill__icon img{ display:block; max-width:100%; max-height:100%; }
+.su-pill__label{ position:absolute; left:5.365cqw; top:50%; transform:translateY(-50%);
+  font:500 1.042cqw/1.5 "Inter","Noto Sans HK",sans-serif; color:var(--navy); white-space:nowrap; }
+.su-pill__value{ position:absolute; left:12.76cqw; top:50%; transform:translateY(-50%);
+  font:400 1.042cqw/1.5 "Inter","Noto Sans HK",sans-serif; color:var(--navy); white-space:nowrap; }
+
+.su-note{ left:10.625%; top:54.33%; width:37.6%; font-size:.781cqw; }
+
+/* =================================================================
+   成為義工會員 pink panel
+   ================================================================= */
+.su-panel{ position:absolute; left:10.625%; top:60.09%; width:78.7%;
+  aspect-ratio:1511/651; background:#FFF0F2; border-radius:1.5625cqw;
+  overflow:hidden; z-index:3; }
+.su-family{ position:absolute; left:0; top:0; width:45.33%; height:100%; }
+.su-vol-h{ position:absolute; left:49.17%; top:33.8%; font-size:1.51cqw;
+  color:var(--navy); }
+.su-vol-b{ position:absolute; left:49.24%; top:41.8%; width:40.7%;
+  font-size:.781cqw; color:var(--navy); }
+.su-vol-l{ position:absolute; left:49.17%; top:61.1%; font-size:.938cqw;
+  color:var(--navy); text-decoration:none; }
+
+/* =================================================================
+   FOOTER — social icons on the standard 315 canvas (as services)
+   ================================================================= */
+.i-foot-social{ left:80.16%; top:71.4%; width:9.17%; }
+
+/* =================================================================
+   TIER M + S (768–1439) — flow / auto height
+   ================================================================= */
+@media (min-width:768px) and (max-width:1439px){
+  .sec--sup .sec__inner{ aspect-ratio:auto; display:flex; flex-direction:column;
+    align-items:flex-start; padding:9cqw var(--margin) 6cqw; }
+
+  /* blobs stay pinned (re-assert absolute against .img{position:static}) */
+  .sec--sup .bleed .img{ position:absolute; }
+  .su-blob-yellow{ left:-30%; top:-14cqw; width:75%; }
+  .su-blob-peach{ left:40%; top:14cqw; width:72%; }
+  .su-blob-white{ left:40%; top:95cqw; width:95%; }
+  /* jar pinned top-right (like the services hands / about earth), text flows past */
+  .i-supjar{ position:absolute; left:auto; right:-8%; top:14cqw; width:62%; }
+
+  .su-label{ position:static; font-size:18px; letter-spacing:.12em; margin-bottom:1.2em; }
+  .su-title{ position:static; margin-bottom:.4em; }
+  .su-intro{ position:static; font-size:15px; width:auto; max-width:30em; margin-bottom:2.6em; }
+  .su-don-h{ position:static; font-size:20px; margin-bottom:1em; }
+  .su-don-b{ position:static; font-size:15px; width:auto; max-width:34em; margin-bottom:1.6em; }
+
+  .su-pills{ position:static; width:100%; max-width:640px; gap:12px; margin-bottom:2em; }
+  .su-pill{ height:auto; min-height:64px; border-radius:20px;
+    display:flex; align-items:center; gap:18px; padding:14px 22px 14px 18px; }
+  .su-pill__icon{ position:static; transform:none; width:30px; height:28px; flex:0 0 auto; }
+  .su-pill__label{ position:static; transform:none; font-size:16px; flex:0 0 auto; min-width:6.5em; }
+  .su-pill__value{ position:static; transform:none; font-size:16px; white-space:normal; }
+
+  .su-note{ position:static; font-size:14px; width:auto; max-width:40em; margin-bottom:5cqw; }
+
+  .su-panel{ position:static; width:100%; aspect-ratio:auto; border-radius:16px;
+    display:flex; flex-direction:column; align-items:flex-start; padding:5cqw 5cqw 5cqw 42%; min-height:36cqw; }
+  .su-family{ width:40%; height:100%; object-fit:cover; object-position:left top; }
+  .su-vol-h{ position:static; font-size:20px; margin-bottom:1em; }
+  .su-vol-b{ position:static; font-size:15px; width:auto; margin-bottom:1.8em; }
+  .su-vol-b p + p{ margin-top:.4em; }
+  .su-vol-l{ position:static; font-size:16px; }
+
+  .i-foot-social{ position:static; width:150px; margin-top:16px; }
+  .page-support .sec--footer .sec__inner{ aspect-ratio:auto; }
+}
+/* the panel keeps position:relative so the pinned family illustration
+   can stay on its left half at the M tier */
+@media (min-width:1024px) and (max-width:1439px){
+  .su-panel{ position:relative; }
+  .su-family{ position:absolute; left:0; top:0; }
+}
+/* S tier: more nav clearance, jar flows after the title (a pinned jar
+   would sit on the full-width pills), panel illustration stacks above */
+@media (min-width:768px) and (max-width:1023px){
+  .sec--sup .sec__inner{ padding-top:14cqw; }
+  .i-supjar{ position:static; width:82%; max-width:none; align-self:flex-end;
+    margin:-4cqw -6.25vw 3cqw 0; }
+  .su-panel{ padding:0 0 4cqw; background:none; border-radius:0; min-height:0; }
+  .su-family{ position:static; width:100%; height:auto; border-radius:16px; margin-bottom:3cqw; }
+  .su-vol-h,.su-vol-b,.su-vol-l{ margin-left:0; }
+}
+
+/* =================================================================
+   MOBILE (≤767) — single column flow
+   ================================================================= */
+@media (max-width:767px){
+  .sec--sup .sec__inner{ aspect-ratio:auto; display:flex; flex-direction:column;
+    align-items:flex-start; padding:88px 20px 48px; }
+
+  .sec--sup .bleed .img{ position:absolute; }
+  .su-blob-yellow{ left:-40%; top:-20vw; width:110%; }
+  .su-blob-peach{ left:30%; top:30vw; width:110%; }
+  .su-blob-white{ left:10%; top:260vw; width:150%; }
+  /* the jar (a .sec__inner child) flows between title and intro —
+     centred, tighter top/bottom gaps (user 2026-07-14) */
+  .i-supjar{ position:static; order:3; width:104%; max-width:none;
+    align-self:center; margin:-6vw 0 0; }
+
+  .su-label{ position:static; order:1; font-size:24px; margin-bottom:18px; }
+  .su-title{ position:static; order:2; font-size:15vw; margin-bottom:2vw; }
+  .su-intro{ position:static; order:4; font-size:13px; width:100%; margin-bottom:26px; }
+  .su-don-h{ position:static; order:5; font-size:22px; margin-bottom:12px; }
+  .su-don-b{ position:static; order:6; font-size:13px; width:100%; margin-bottom:16px; }
+
+  .su-pills{ position:static; order:7; width:100%; gap:10px; margin-bottom:20px; }
+  .su-pill{ height:auto; border-radius:16px; display:flex; align-items:flex-start;
+    gap:12px; padding:14px 16px; }
+  .su-pill__icon{ position:static; transform:none; width:24px; height:24px; flex:0 0 auto; margin-top:1px; }
+  .su-pill__label{ position:static; transform:none; font-size:14px; flex:0 0 auto; min-width:5.6em; line-height:1.6; }
+  .su-pill__value{ position:static; transform:none; font-size:14px; white-space:normal; line-height:1.6; }
+
+  .su-note{ position:static; order:8; font-size:12px; width:100%; margin-bottom:34px; }
+
+  /* panel: text + 電郵申請 first, illustration below (user 2026-07-14) */
+  .su-panel{ position:static; order:9; width:100%; aspect-ratio:auto;
+    border-radius:16px; overflow:hidden; display:flex; flex-direction:column;
+    align-items:flex-start; padding:26px 20px 0; }
+  .su-vol-h{ position:static; order:1; font-size:20px; margin-bottom:12px; }
+  .su-vol-b{ position:static; order:2; font-size:13px; width:100%; margin-bottom:20px; }
+  .su-vol-b p + p{ margin-top:.4em; }
+  .su-vol-l{ position:static; order:3; font-size:15px; }
+  .su-family{ position:static; order:4; width:78%; height:auto; margin:14px 0 0 -20px; }
+
+  .i-foot-social{ order:4; position:static; width:150px; margin-top:18px; }
+  .page-support .sec--footer .sec__inner{ aspect-ratio:auto; }
+}

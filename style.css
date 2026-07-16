@@ -65,6 +65,13 @@ body{ background:var(--cream); color:var(--navy); font-family:"Inter",system-ui,
 .sec--landing  .sec__inner{ aspect-ratio:1920 / 2254; }
 .sec--services .sec__inner{ aspect-ratio:1920 / 1600; }
 .sec--support  .sec__inner{ aspect-ratio:1920 / 842;  }
+/* the jar/hand bleed layer sits INSIDE .sec__inner: both .sec__inner's shared
+   overflow:hidden AND .bleed's own overflow:hidden clip at the 1920 canvas
+   box (their containing block), giving the extended arm a hard vertical cut
+   above 1920px viewport instead of bleeding to the true edge. Open both —
+   the outer .sec is full-viewport-width and still clips at the real edge. */
+.sec--support  .sec__inner{ overflow:visible; }
+.sec--support  .bleed--front{ overflow:visible; }
 .sec--footer   .sec__inner{ aspect-ratio:1920 / 315;  }
 
 /* ---- positioned primitives ---- */
@@ -90,8 +97,8 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
   line-height:1.33; color:var(--navy); white-space:nowrap; z-index:3; }
 .disp.on-blue{ color:#fff; }
 
-/* "+" on the 68,000 stat — sits at the number's tail, raised */
-.num .plus{ font-size:.6em; vertical-align:.55em; font-weight:700; margin-left:.04em; }
+/* "+" on the 68,000 stat — vertically centred against the digits */
+.num .plus{ font-size:.6em; vertical-align:.12em; font-weight:700; margin-left:.04em; }
 
 /* "×" connector between two tags — same ink as the text */
 .tag-x::after{ content:"×"; color:currentColor; margin:0 .55em; font-weight:400; }
@@ -108,23 +115,28 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
 .label-line{ display:inline-flex; flex-direction:column; align-items:center; }
 .label-line::after{ content:""; width:100%; height:1px; background:currentColor; margin-top:.6em; opacity:.85; }
 
-/* ---- paper texture overlay (Figma "filter mask") ---- */
-.paper::after{
-  content:""; position:absolute; inset:0; z-index:5; pointer-events:none;
-  opacity:.14; mix-blend-mode:multiply;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size:200px 200px;
-}
-
 /* =================================================================
    NAV
    ================================================================= */
 .nav{ position:absolute; top:0; left:0; right:0; z-index:50; display:flex; justify-content:center; }
-.nav__inner{ width:100%; max-width:1920px; container-type:inline-size; display:flex; align-items:center; padding:1.15cqw 10.625% 0; }
+/* the 10.625% side margin can't be plain percentage padding here: .nav__inner
+   caps its OWN width at 1920px, but percentage padding always resolves
+   against the parent's (.nav, uncapped, full-viewport) width — so above
+   1920px viewport a plain 10.625% would be 10.625% of the viewport, not of
+   the capped 1920 canvas (see the LAYOUT GRID OVERLAY comment below for the
+   same bug caught in that component). min(10.625vw, 204px) reproduces
+   "10.625% of min(100vw,1920px)" exactly, since 10.625vw IS 10.625% of the
+   viewport and 204px IS 10.625% of 1920px — no extra wrapper element needed. */
+.nav__inner{ width:100%; max-width:1920px; container-type:inline-size; display:flex; align-items:center;
+  padding:1.15cqw min(10.625vw, 204px) 0; }
 .nav__logo img{ height:4.27cqw; }
 .nav__menu{ display:flex; gap:2.083cqw; margin-left:2.8cqw; }
 .nav__menu a{ font:500 .9375cqw/1 "Noto Sans HK","Inter",sans-serif; letter-spacing:.07em; color:var(--navy); text-decoration:none; }
-.nav__menu a:hover{ color:var(--orange); }
+.nav__menu a:hover{ color:var(--blue); }
+/* current page: double underline (two 1px lines 3px apart), per the design */
+.nav__menu a.is-active{ position:relative; }
+.nav__menu a.is-active::after{ content:""; position:absolute; left:0; right:0; top:100%;
+  height:3px; margin-top:calc(.25em + 2px); border-top:1px solid var(--blue); border-bottom:1px solid var(--blue); }
 .nav__right{ margin-left:auto; display:flex; align-items:center; gap:1.4cqw; }
 .nav__partners{ display:flex; align-items:center; gap:1cqw; }
 .nav__partner{ height:1.95cqw; }
@@ -361,10 +373,18 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
 
   /* shared stat rows (landing + card 1) */
   .m-stats,.m-c1-stats{ display:flex; flex-direction:row; flex-wrap:wrap;
-    gap:2.6cqw; align-items:flex-start; }
+    gap:4.5cqw; align-items:flex-start; }
   .m-stat{ display:flex; flex-direction:column; gap:.4em; }
+  /* stat figures hold a readable fixed-ish size (the raw cqw sizes shrink
+     to ~body size at 768px, killing the hierarchy) */
+  .m-stat .num{ font-size:clamp(30px,3.2cqw,44px); line-height:1; }
   .m-stat .ming{ font-size:13px; letter-spacing:.04em; opacity:.85; }
-  .e-c1-star{ font-size:13px; }
+  /* card-1 middle stat reads "6 星期" on one line, 服務期數 below (per design) */
+  .m-c1-stats .m-stat:nth-child(2){ display:grid;
+    grid-template-columns:auto 1fr; align-items:baseline; gap:6px .35em; }
+  .m-c1-stats .m-stat:nth-child(2) .num{ grid-column:1; grid-row:1; }
+  .e-c1-star{ grid-column:2; grid-row:1; font-size:15px; }
+  .e-c1-l2{ grid-column:1/-1; grid-row:2; }
 
   /* ===================  LANDING  =================== */
   .e-wecare{ margin-bottom:.1em; }
@@ -383,7 +403,7 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
   .wl-row2{ display:flex; align-items:baseline; gap:2.2cqw; margin:-1.2cqw 0 0 10cqw; }
   .m-wl-typo .disp{ position:static; line-height:1.15; }
   .m-tags{ display:flex; flex-wrap:wrap; gap:.2em 1.2em; margin:1cqw 0 1.2em; }
-  .e-wl-tag,.e-wl-tag2{ font-size:17px; }
+  .e-wl-tag,.e-wl-tag2{ font-size:20px; }
   .e-wl-body{ margin-bottom:1.2em; }
   .e-wl-link{ margin-bottom:6cqw; }
   /* society hands — bleed off the right edge (as in the mobile design) */
@@ -400,7 +420,7 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
   .m-c1-stats{ margin-bottom:2.4cqw; }
   .m-c2-meta{ display:flex; flex-wrap:wrap; align-items:flex-end; gap:1em 3cqw;
     margin-bottom:2.4cqw; }
-  .e-c2-tag{ font-size:17px; }
+  .e-c2-tag{ font-size:19px; }
   .i-svc-family{ width:44%; max-width:none; margin:0 0 3cqw; align-self:flex-end; }
   .i-svc-bike{ width:40%; max-width:none; margin:0 0 3cqw; align-self:flex-end; }
   .e-c1-link{ margin-bottom:9cqw; }
@@ -424,8 +444,9 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
   /* ===================  FOOTER  =================== */
   .i-foot-logo{ width:180px; margin-bottom:4cqw; }
   .m-foot-row{ display:flex; align-items:center; gap:16px; margin-bottom:3cqw; }
-  .i-foot-chest{ height:38px; width:auto; }
-  .i-foot-swd{ height:40px; width:auto; }
+  /* .m-foot-row prefix lifts specificity above img.img{height:auto} */
+  .m-foot-row .i-foot-chest{ height:38px; width:auto; }
+  .m-foot-row .i-foot-swd{ height:40px; width:auto; }
   .e-foot-swd-t{ font-size:11px; line-height:1.2; width:auto; }
   .e-foot-copy{ font-size:13px; }
 }
@@ -482,6 +503,31 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
   .i-jar{ grid-column:2; grid-row:4; width:120%; max-width:none;
     justify-self:end; align-self:start; margin:-6cqw -14.3% 0 0; }
   .e-sup-i2l{ margin-bottom:0; }
+}
+
+/* =================================================================
+   TIER S — TABLET (768–1023px) · overrides on the M+S flow block.
+   The single-column flow follows the MOBILE composition (hero graphic
+   bleeding both edges with the heart on the centreline and "we care."
+   overlaid; jar enlarged with the arm cropped at the right edge),
+   scaled to tablet. (At ≤1023 the canvas equals the viewport, so
+   cqw ≈ vw.)
+   ================================================================= */
+@media (min-width:768px) and (max-width:1023px){
+  /* ---- LANDING hero — mirror the mobile overlay composition ---- */
+  .l-hero{ display:block; position:relative;
+    width:100vw; margin:0 0 5cqw -6.25vw; }
+  /* heart of the graphic sits at ~35% of the image width → centreline */
+  .i-hero-hand{ display:block; width:145%; max-width:none;
+    margin:0 0 0 -1%; }
+  .e-wecare{ position:absolute; top:7vw; left:50%; transform:translateX(-50%);
+    z-index:3; width:min-content; text-align:center;
+    font-size:14vw; line-height:.78; margin:0; }
+  .i-star1{ left:9vw; right:auto; top:17vw; width:7vw; }
+  .i-heart{ left:auto; right:15vw; top:27vw; width:8vw; }
+
+  /* ---- SUPPORT jar — big jar, arm cropped at the right edge ---- */
+  .i-jar{ width:135%; align-self:flex-start; margin:-8cqw -50% 6cqw 0; }
 }
 
 /* =================================================================
@@ -603,11 +649,13 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
      bleeding BOTH edges, with "we / care." stacked+centred overlaid top-right */
   .l-hero{ display:block; position:relative; order:1;
     width:calc(100% + 40px); margin:0 -20px 20px; }
-  .i-hero-hand{ display:block; width:205%; max-width:none;
-    margin:0 0 0 -38%; }
-  .e-wecare{ position:absolute; top:12vw; right:24vw; z-index:3;
-    width:min-content; text-align:center;
-    font-size:20.5vw; line-height:.74; margin:0; }
+  /* heart of the graphic sits at ~35% of the image width, so this margin
+     puts the heart on the viewport centreline */
+  .i-hero-hand{ display:block; width:150%; max-width:none;
+    margin:0 0 0 -3%; }
+  .e-wecare{ position:absolute; top:9vw; left:50%; transform:translateX(-50%);
+    z-index:3; width:min-content; text-align:center;
+    font-size:19vw; line-height:.74; margin:0; }
   .e-intro-sub{ order:3; font-size:24px; margin-bottom:14px; }
   .e-intro-b1{ order:4; margin-bottom:22px; }
   .e-intro-div{ order:5; position:static; width:100%; margin-bottom:22px; }
@@ -645,9 +693,14 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
   .e-c1-h{ order:5; font-size:26px; margin-bottom:16px; }
   .e-c1-b{ order:6; margin-bottom:24px; }
   .m-c1-stats{ order:7; margin-bottom:20px; }
-  .e-c1-star{ font-size:16px!important; }
+  /* "6 星期" on one line, 服務期數 below (per the mobile frame) */
+  .m-c1-stats .m-stat:nth-child(2){ display:grid;
+    grid-template-columns:auto 1fr; align-items:baseline; gap:6px .35em; }
+  .m-c1-stats .m-stat:nth-child(2) .num{ grid-column:1; grid-row:1; }
+  .e-c1-star{ grid-column:2; grid-row:1; font-size:16px!important; }
+  .e-c1-l2{ grid-column:1/-1; grid-row:2; }
   .e-c1-link{ order:8; margin-bottom:18px; }   /* link BEFORE the doodle, per design */
-  .i-svc-family{ order:9; width:78%; align-self:flex-end; margin:0 0 64px; }
+  .i-svc-family{ order:9; width:58%; align-self:flex-end; margin:0 0 64px; }  /* ≈250/440 per frame */
 
   .i-photo-cycling{ order:10; width:100%; height:auto; aspect-ratio:400/256;
     object-fit:cover; border-radius:12px; margin-bottom:28px; }
@@ -657,7 +710,7 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
     margin-bottom:20px; }
   .m-c2-meta .e-c2-tag{ font-size:22px; }
   .e-c2-link{ order:14; margin-bottom:18px; }  /* link BEFORE the doodle, per design */
-  .i-svc-bike{ order:15; width:70%; align-self:flex-end; margin:0; }
+  .i-svc-bike{ order:15; width:52%; align-self:flex-end; margin:0; }  /* ≈215/440 per frame */
 
   /* =====================  SUPPORT  ===================== */
   .e-sup-label{ order:1; margin-bottom:24px; }
@@ -665,9 +718,10 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
   .e-sup-support{ order:2; font-size:64px; }
   .e-sup-us{ order:3; font-size:64px; margin-bottom:12px; }
   .sec--support .bleed--front,.sec--support .bleed__canvas{ display:contents; }
-  /* jar + arm bleed off the right edge, tucked up beside "us" */
-  .i-jar{ order:4; position:static; width:108%; max-width:none;
-    align-self:flex-end; margin:-10px -20px 36px 0; }
+  /* jar + arm: enlarge so the jar body reads big (per frame) and let the
+     arm run off the right edge — the crop is what keeps the arm short */
+  .i-jar{ order:4; position:static; width:150%; max-width:none;
+    align-self:flex-start; margin:-8vw -70% 36px 0; }
   .e-sup-i1h{ order:5; font-size:26px; margin-bottom:16px; }
   .e-sup-i1b{ order:6; margin-bottom:18px; }
   .e-sup-i1l{ order:7; margin-bottom:40px; }
@@ -679,12 +733,13 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
      per the mobile frame 75:2551 (440×359): logo 231px wide at y58,
      partners at y213 with a wide gap, copyright at y281 */
   .sec--footer .sec__inner{ padding-top:58px; padding-bottom:60px; }
-  .i-foot-logo{ order:1; width:52.5%; max-width:231px; margin-bottom:52px; }
+  .i-foot-logo{ order:1; width:42%; max-width:180px; margin-bottom:40px; }
   .m-foot-row{ order:2; display:flex; align-items:center; gap:0;
-    margin-bottom:30px; width:100%; max-width:264px; }
-  .i-foot-chest{ height:37px; width:auto; }
-  .i-foot-swd{ height:39px; width:auto; margin-left:auto; }
-  .e-foot-swd-t{ font-size:10px; line-height:1.2; width:auto; margin-left:8px;
+    margin-bottom:30px; width:100%; max-width:220px; }
+  /* .m-foot-row prefix lifts specificity above img.img{height:auto} */
+  .m-foot-row .i-foot-chest{ height:32px; width:auto; }
+  .m-foot-row .i-foot-swd{ height:34px; width:auto; margin-left:auto; }
+  .e-foot-swd-t{ font-size:9px; line-height:1.2; width:auto; margin-left:7px;
     flex:0 0 auto; white-space:nowrap;
     text-transform:uppercase; letter-spacing:.02em; }
   .e-foot-copy{ order:3; font-size:11px; color:#000; }
@@ -694,13 +749,25 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
    LAYOUT GRID OVERLAY  (Figma column guide — press "G" to toggle)
    12 columns · 204px margins (10.625%) · 25px gutter (1.302%) ·
    #FF6200 @ 10%. Caps + centres on the 1920 canvas like .sec__inner.
+
+   GOTCHA: percentage padding always resolves against the CONTAINING
+   BLOCK's width, not the padded element's own (possibly capped) width.
+   .grid-overlay__cap does ONLY the width:100%/max-width:1920px capping +
+   centring (like .sec__inner); .grid-overlay__inner nests INSIDE it and
+   carries the percentage padding/gap, so above 1920px viewport those
+   percentages resolve against the already-capped 1920 box, not the raw
+   (wider) viewport — otherwise the margin above 1920px is computed
+   against the viewport width instead of the canvas, throwing every
+   column out of alignment with the real (percent-of-canvas) content grid.
    ================================================================= */
 .grid-overlay{ position:fixed; inset:0; z-index:9999; pointer-events:none; display:none; }
 .grid-overlay.is-on{ display:block; }
-.grid-overlay__inner{
+.grid-overlay__cap{
   position:absolute; top:0; left:50%; transform:translateX(-50%);
   width:100%; max-width:1920px; height:100%;
-  container-type:inline-size;
+}
+.grid-overlay__inner{
+  width:100%; height:100%; box-sizing:border-box;
   padding:0 var(--margin);            /* tier margin */
   display:flex; gap:var(--gutter);    /* tier gutter */
 }
@@ -709,6 +776,71 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
 @media (max-width:1439px){ .grid-overlay__col:nth-child(n+9){ display:none; } }
 @media (max-width:1023px){ .grid-overlay__col:nth-child(n+7){ display:none; } }
 @media (max-width:767px){
-  .grid-overlay__inner{ max-width:none; padding:0 20px; gap:15px; }
+  .grid-overlay__inner{ padding:0 20px; gap:15px; }
   .grid-overlay__col:nth-child(n+5){ display:none; }
+}
+
+/* =================================================================
+   MOTION SYSTEM — shared by every page (script.js drives the JS
+   parts). All JS movement writes the `translate` property so it
+   never fights the rotate()/translateX() transforms above.
+   ================================================================= */
+
+/* Long pages paint progressively while still parsing, so reveal targets
+   could be painted visible BEFORE script.js tags them .fx-r — the user
+   would watch them fade OUT, and the later rise-in would start from that
+   interrupted half-state (looked "stuck" / "too short"). The head inline
+   script sets html.js-fx pre-paint; this veil keeps the stage unpainted
+   until script.js finishes marking targets and adds html.fx-marked. */
+.js-fx:not(.fx-marked) .stage{ visibility:hidden; }
+
+/* scroll reveal — script.js tags targets .fx-r, then .fx-in when
+   they enter the viewport; --fx-d staggers each batch */
+/* same recipe as the VC site (3am-design.github.io/VC): 30px over 2.2s on
+   an ease-out-quint glide, no artificial stagger — short distance + long
+   settle is what reads as calm instead of mechanical */
+.js-fx .fx-r{
+  opacity:0; translate:0 var(--fx-rise,30px);
+}
+/* transitions are only "armed" (html.fx-armed, set right before the reveals
+   begin) — so marking elements hidden can never animate on screen, no matter
+   how late the CSS/JS arrive. Un-armed state changes are instant. */
+.js-fx.fx-armed .fx-r{
+  transition:opacity 2.2s cubic-bezier(.22,1,.36,1) var(--fx-d,0s),
+             translate 2.2s cubic-bezier(.22,1,.36,1) var(--fx-d,0s);
+}
+.js-fx .fx-r.fx-in{ opacity:1; translate:0 0; }
+
+/* Promote only while the reveal is actually running. Keeping every target
+   promoted for the life of a long page wastes GPU memory. */
+.js-fx .fx-r.fx-live{ will-change:opacity,translate; }
+
+/* Large images fade in without moving a multi-megapixel texture. */
+.js-fx .fx-r.fx-fade{ translate:none; }
+.js-fx.fx-armed .fx-r.fx-fade{ transition-property:opacity; }
+
+/* JS writes translate to these every frame — reveal them by opacity only */
+.js-fx .fx-r.fx-bg-motion{ translate:none; }
+.js-fx.fx-armed .fx-r.fx-bg-motion{ transition-property:opacity; }
+
+/* Only active background blobs/doodles are promoted. */
+.fx-motion-active{ will-change:translate; }
+
+/* Fixed crop frame: the outer geometry never changes; only the bitmap inside
+   scales. Existing photo positioning classes live on .photo-frame. */
+.photo-frame{ display:block; overflow:hidden; aspect-ratio:var(--photo-ratio); }
+.photo-frame__img{
+  display:block; width:100%; height:100%; object-fit:cover; border-radius:inherit;
+  transform:scale(1); transition:transform 1s cubic-bezier(.16,1,.3,1);
+}
+/* zoom is only tied to hovering the associated link — hovering the photo
+   itself (or elsewhere on a card with no link) does nothing. */
+a:hover .photo-frame__img,
+.s-card:has(a:hover) .photo-frame__img{ transform:scale(1.045); }
+
+@media (prefers-reduced-motion:reduce){
+  .js-fx .fx-r{ opacity:1; translate:none; transition:none; }
+  .photo-frame__img{ transition:none; }
+  a:hover .photo-frame__img,
+  .s-card:has(a:hover) .photo-frame__img{ transform:none; }
 }

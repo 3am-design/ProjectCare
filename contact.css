@@ -1,0 +1,108 @@
+/* =================================================================
+   Project Care — Contact page (05_Contact, Figma frame 1:3492)
+   Loads AFTER style.css and reuses its system: fixed 1920 canvas,
+   .sec__inner container-query context, cqw sizing, type roles.
+   ONE cream absolute canvas hero (1920 × 1094) + the index blue
+   support section (all its rules live in style.css) + the standard
+   footer. Background blobs are FULL shapes in the shared .bleed layer.
+   Typography follows the html convention, not the raw Figma sizes.
+   ================================================================= */
+
+.sec--chero{ background:var(--cream); }
+.sec--chero .sec__inner{ aspect-ratio:1920/1094; }
+
+/* ---- background blobs (full shapes; positions from the Figma exports'
+   frame coordinates; tops in cqw so they track the canvas) ---- */
+.c-blob-green{ left:-21.07%; top:-7.23cqw; width:65.74%; }  /* green — top-left, bleeds off-canvas */
+.c-blob-peach{ left:50.42%;  top:23.2cqw;  width:56.7%;  }  /* peach — behind the map, lower right */
+
+/* =================================================================
+   HERO
+   ================================================================= */
+.c-label{ left:10.417%; top:18.28%; font-size:1.302cqw; letter-spacing:.1em; }
+.c-title{ left:10.26%; top:22.03%; font-size:8.333cqw; font-weight:600; line-height:1.33; }
+.c-intro{ left:10.625%; top:calc(38.85% + 2px); width:32%; font-size:.781cqw; }
+
+/* ---- 聯絡方式 white pill rows ---- */
+.c-pills{ position:absolute; left:10.625%; top:44.97%; width:35.83%; z-index:3;
+  display:flex; flex-direction:column; gap:.521cqw; }   /* 89px pills, 10px gaps */
+.c-pill{ position:relative; height:4.635cqw; background:#fff;
+  border-radius:1.5625cqw; }
+.c-pill__icon{ position:absolute; left:1.7cqw; top:50%; transform:translateY(-50%);
+  width:2.1cqw; height:2.1cqw; display:flex; align-items:center; justify-content:center; }
+.c-pill__icon img{ display:block; max-width:100%; max-height:100%; }
+.c-pill__value{ position:absolute; left:5.365cqw; top:50%; transform:translateY(-50%);
+  font:400 1.042cqw/1.5 "Inter","Noto Sans HK",sans-serif; color:var(--navy); white-space:nowrap; }
+.c-pill__value a{ color:inherit; text-decoration:none; }
+.c-pill__value a:hover{ text-decoration:underline; }
+
+/* blue support section: uses index's support-jar.svg + style.css rules verbatim, no page overrides */
+
+/* ---- 地圖 ---- */
+.c-map{ position:absolute; left:50.625%; top:21.39%; width:38.7%; aspect-ratio:1/1;
+  border-radius:1.5625cqw; overflow:hidden; z-index:2; }
+.c-map__img{ display:block; width:100%; height:100%; object-fit:cover; }
+.c-map__pin{ position:absolute; left:46.84%; top:46.03%; width:6.23%; }
+
+/* =================================================================
+   FOOTER — social icons on the standard 315 canvas (as services)
+   ================================================================= */
+.i-foot-social{ left:80.16%; top:71.4%; width:9.17%; }
+
+/* =================================================================
+   TIER M + S (768–1439) — flow / auto height
+   (the blue support section's tiers live in style.css already)
+   ================================================================= */
+@media (min-width:768px) and (max-width:1439px){
+  .sec--chero .sec__inner{ aspect-ratio:auto; display:flex; flex-direction:column;
+    align-items:flex-start; padding:9cqw var(--margin) 7cqw; }
+
+  .sec--chero .bleed .img{ position:absolute; }
+  .c-blob-green{ left:-32%; top:-12cqw; width:85%; }
+  .c-blob-peach{ left:45%; top:30cqw; width:75%; }
+
+  .c-label{ position:static; font-size:18px; letter-spacing:.12em; margin-bottom:1.2em; }
+  .c-title{ position:static; margin-bottom:.4em; }
+  .c-intro{ position:static; font-size:15px; width:auto; max-width:30em; margin-bottom:2.4em; }
+
+  .c-pills{ position:static; width:100%; max-width:560px; gap:10px; margin-bottom:4cqw; }
+  .c-pill{ height:auto; min-height:60px; border-radius:20px;
+    display:flex; align-items:center; gap:16px; padding:12px 22px 12px 16px; }
+  .c-pill__icon{ position:static; transform:none; width:28px; height:28px; flex:0 0 auto; }
+  .c-pill__value{ position:static; transform:none; font-size:16px; white-space:normal; }
+
+  .c-map{ position:relative; left:0; top:0; width:100%; aspect-ratio:4/3; border-radius:16px; }
+
+  .i-foot-social{ position:static; width:150px; margin-top:16px; }
+  .page-contact .sec--footer .sec__inner{ aspect-ratio:auto; }
+}
+@media (min-width:768px) and (max-width:1023px){
+  .sec--chero .sec__inner{ padding-top:14cqw; }
+}
+
+/* =================================================================
+   MOBILE (≤767) — single column flow
+   ================================================================= */
+@media (max-width:767px){
+  .sec--chero .sec__inner{ aspect-ratio:auto; display:flex; flex-direction:column;
+    align-items:flex-start; padding:88px 20px 44px; }
+
+  .sec--chero .bleed .img{ position:absolute; }
+  .c-blob-green{ left:-45%; top:-16vw; width:130%; }
+  .c-blob-peach{ left:25%; top:110vw; width:120%; }
+
+  .c-label{ position:static; order:1; font-size:24px; margin-bottom:18px; }
+  .c-title{ position:static; order:2; font-size:15vw; margin-bottom:6vw; }
+  .c-intro{ position:static; order:3; font-size:13px; width:100%; margin-bottom:24px; }
+  .c-pills{ position:static; order:4; width:100%; gap:10px; }
+  /* map goes BELOW the contact info on mobile (user 2026-07-14) */
+  .c-map{ position:relative; left:0; top:0; order:5; width:100%; aspect-ratio:1/1; border-radius:16px;
+    margin-top:26px; }
+  .c-pill{ height:auto; border-radius:16px; display:flex; align-items:flex-start;
+    gap:12px; padding:14px 16px; }
+  .c-pill__icon{ position:static; transform:none; width:22px; height:22px; flex:0 0 auto; margin-top:1px; }
+  .c-pill__value{ position:static; transform:none; font-size:14px; white-space:normal; line-height:1.6; }
+
+  .i-foot-social{ order:4; position:static; width:150px; margin-top:18px; }
+  .page-contact .sec--footer .sec__inner{ aspect-ratio:auto; }
+}
