@@ -474,14 +474,14 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
   .l-cols{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);
     column-gap:8cqw; align-items:start; margin-bottom:0; width:100%; }
   .l-intro,.l-society{ display:flex; flex-direction:column; align-items:flex-start; }
-  .l-society{ margin-top:9cqw; }            /* society block sits lower, per the design diagonal */
+  .l-society{ margin-top:25cqw; }           /* keep the society lockup visibly lower than the left intro column */
   .e-intro-div,.sans{ max-width:none; }     /* boxes are the grid column now */
   /* lockup shrinks to fit the half column, keeps its stagger */
   .m-wl-typo .disp{ font-size:7cqw; }
   .e-wl-the{ font-size:2.9cqw; }
   .wl-row2{ margin-left:7.5cqw; }
   /* hands sit lower-LEFT and bleed off the left edge, as on desktop */
-  .i-hands{ width:42%; align-self:flex-start; margin:-8cqw 0 0 -7.143%; }
+  .i-hands{ width:47%; align-self:flex-start; margin:-18cqw 0 0 -7.143%; }
 
   /* ---- SERVICES : each card photo | text side-by-side ---- */
   .s-card{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);
