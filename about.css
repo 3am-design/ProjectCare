@@ -416,13 +416,22 @@
   .chart__lines{ display:none; }
   .cbox,.chome{ position:static; width:auto; height:auto; }
   .cbox{ padding:13px 16px; border-radius:12px; }
+  /* stack follows the chart's actual reporting lines: 副服務總監 → 沙角+天平,
+     會計主任 → 景林, 社工 → 白田(一)(二). The five .chome share one class, so
+     they're picked out by :nth-child — .chart children are svg(1), cbox 2-12
+     (exec,lav×2,green,orange,mint×4,peach×2), chome 13-17. KEEP IN SYNC if
+     boxes are ever added/reordered in about.html. */
   .cbox--exec{ order:1; }
   .cbox--lav{ order:2; }              /* 服務總監 + 副服務總監 (DOM order kept within) */
-  .cbox--green{ order:3; }
-  .cbox--mint{ order:4; margin-left:24px; }    /* 行政支援 branch */
-  .cbox--orange{ order:5; }
-  .cbox--peach{ order:6; margin-left:24px; }   /* 兒童之家 branch */
-  .chome{ order:7; margin-left:24px; border-radius:14px; padding:14px 16px 16px;
+  .chome:nth-child(13),.chome:nth-child(14){ order:3; }   /* 沙角 + 天平 ← 副服務總監 */
+  .cbox--green{ order:4; }
+  .cbox--mint{ order:5; margin-left:24px; }    /* 行政支援 branch */
+  .cbox--orange{ order:6; }
+  .cbox--peach{ order:7; margin-left:24px; }   /* 會計主任 (兒童之家 branch) */
+  .chome:nth-child(15){ order:8; margin-left:44px; }       /* 景林 ← 會計主任 */
+  .cbox:nth-child(12){ order:9; }                          /* 社工 (2nd peach) */
+  .chome:nth-child(16),.chome:nth-child(17){ order:10; margin-left:44px; }  /* 白田×2 ← 社工 */
+  .chome{ margin-left:24px; border-radius:14px; padding:14px 16px 16px;
     font-size:13px; }   /* base .chome carries its own .781cqw font-size — ~3px on mobile (no container) */
   .chome__chips{ position:static; margin-top:10px; display:flex; gap:8px; }
   .chome__chips span{ border-radius:8px; padding:6px 0; }
