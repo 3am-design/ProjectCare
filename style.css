@@ -161,20 +161,22 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
 .e-wl-the   {left:55.417%;top:76.708%;font-size:3.854cqw;font-weight:400;font-style:italic;line-height:1.378;}
 
 .e-intro-sub{left:10.625%;top:36.466%;font-size:1.302cqw;letter-spacing:.1em;}
-.e-intro-b1{left:10.625%;top:38.687%;width:18.698%;font-size:.781cqw;}
+.e-intro-b1{left:10.625%;top:38.687%;width:25.382%;font-size:.781cqw;}   /* 4 grid columns */
 .e-intro-div{left:10.625%;top:46.140%;width:18.698%;}
+/* stats compressed into the same 4-col block as the body text above/below —
+   lefts are grid column starts 1/2/3 of that block (68,000+ ends inside col 4) */
 .e-stat1n{left:10.573%;top:49.778%;font-size:2.865cqw;}
 .e-stat1l{left:10.573%;top:53.150%;font-size:.938cqw;}
-.e-stat2n{left:22.552%;top:49.690%;font-size:2.865cqw;}
-.e-stat2l{left:22.552%;top:53.150%;font-size:.938cqw;}
-.e-stat3n{left:30.573%;top:49.778%;font-size:2.865cqw;}
-.e-stat3l{left:30.625%;top:53.150%;font-size:.938cqw;}
-.e-intro-b2{left:10.625%;top:55.146%;width:32.031%;font-size:.781cqw;}
-.e-intro-about{left:10.573%;top:58.516%;font-size:.938cqw;}
+.e-stat2n{left:19.4%;top:49.690%;font-size:2.865cqw;}   /* optically centred between 1981 and 68,000+ (col-2 start sat too close to 1981) */
+.e-stat2l{left:19.4%;top:53.150%;font-size:.938cqw;}
+.e-stat3n{left:25.2%;top:49.778%;font-size:2.865cqw;}   /* 68,000+ right edge lands on the 4-col right edge (36.007%) */
+.e-stat3l{left:25.2%;top:53.150%;font-size:.938cqw;}
+.e-intro-b2{left:10.625%;top:55.146%;width:25.382%;font-size:.781cqw;}   /* 4 grid columns, matches e-intro-b1 */
+.e-intro-about{left:10.573%;top:59.6%;font-size:.938cqw;}   /* gap under e-intro-b2 tuned to match the 服務簡介 link's 25px; L tier re-nudges (text wraps deeper there) */
 
 .e-wl-tag{left:57.292%;top:83.005%;font-size:1.510cqw;}
 .e-wl-tag2{left:68.229%;top:83.005%;font-size:1.510cqw;}
-.e-wl-body{left:57.292%;top:85.359%;width:25.365%;font-size:.781cqw;}
+.e-wl-body{left:57.292%;top:85.359%;width:25.382%;font-size:.781cqw;}   /* 4 grid columns */
 .e-wl-link{left:57.292%;top:88.685%;font-size:.938cqw;}
 
 .i-hero-hand{left:45%;top:7%;width:54%;z-index:2;}  /* hero hand + 45th heart, full image (not cut at right) */
@@ -220,8 +222,8 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
 .e-c1-s1,.e-c1-s2,.e-c1-s3,.e-c2-s1{ font-weight:400; letter-spacing:.02em; }
 
 .i-photo-kids{left:15.990%;top:26.500%;width:33.333%;height:25.625%;}
-.e-c1-h{left:53.594%;top:26.184%;font-size:1.510cqw;}
-.e-c1-b{left:53.594%;top:29.188%;width:23.073%;font-size:.781cqw;}
+.e-c1-h{left:53.594%;top:26.75%;font-size:1.510cqw;}   /* heading sits just below the photo's top edge, not above it */
+.e-c1-b{left:53.594%;top:29.5%;width:25.382%;font-size:.781cqw;}   /* 4 grid columns */
 .e-c1-s1{left:53.333%;top:33.188%;font-size:2.344cqw;}
 .e-c1-s2{left:60.990%;top:33.188%;font-size:2.344cqw;}
 .e-c1-s3{left:67.708%;top:33.188%;font-size:2.344cqw;}
@@ -233,8 +235,8 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
 .i-svc-family{left:66.794%;top:35.500%;width:18.065%;}
 
 .i-photo-cycling{left:50.625%;top:60.250%;width:33.333%;height:25.625%;}
-.e-c2-h{left:17.135%;top:59.746%;font-size:1.510cqw;}
-.e-c2-b{left:17.135%;top:62.750%;width:23.073%;font-size:.781cqw;}
+.e-c2-h{left:17.135%;top:60.31%;font-size:1.510cqw;}   /* heading sits just below the photo's top edge, not above it */
+.e-c2-b{left:17.135%;top:63.06%;width:25.382%;font-size:.781cqw;}   /* 4 grid columns */
 .e-c2-s1{left:17.292%;top:67.125%;font-size:2.344cqw;}
 .e-c2-tag{left:25.521%;top:68.750%;font-size:1.198cqw;}
 .e-c2-tag .x{ color:currentColor; margin:0 .5em; }
@@ -263,7 +265,7 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
    FOOTER   (1920 x 315)
    ================================================================= */
 .i-foot-logo{left:10.469%;top:19.048%;width:14.635%;}
-.e-foot-copy{left:10.625%;top:73.651%;font-size:.781cqw;color:#000;}
+.e-foot-copy{left:10.625%;top:79.17%;font-size:.781cqw;color:#000;}   /* bottom gap trimmed 30% (58px→41px at 1920) */
 .e-foot-copy a{ color:inherit; text-decoration:none; }
 .e-foot-copy a:hover{ color:var(--blue); text-decoration:underline; text-underline-offset:.15em; }
 .i-foot-chest{left:75.417%;top:24.127%;width:5.521%;}
@@ -541,17 +543,19 @@ a.img img,.nav__logo img{ display:block; width:100%; height:auto; }
 @media (min-width:1440px) and (max-width:1919px){
   /* body stepped to 14px + boxes widened to stay ~2 lines, followers nudged
      down a touch so the slightly taller text never reaches the buttons/stats */
-  .e-intro-b1{ width:25%; font-size:14px; }
-  .e-intro-b2{ width:43%; font-size:14px; }
-  .e-wl-body{ width:34%; font-size:14px; }
+  .e-intro-b1{ width:25.382%; font-size:14px; }   /* 4 grid columns, matches XL tier */
+  .e-intro-b2{ width:25.382%; font-size:14px; }
+  /* 14px text wraps one line deeper here than at XL — keep the link clear of it */
+  .e-intro-about{ top:60.5%; }
+  .e-wl-body{ width:25.382%; font-size:14px; }   /* 4 grid columns */
   .e-wl-link{ top:90.5%; }
-  .e-c1-b{ width:31%; font-size:14px; }
+  .e-c1-b{ width:25.382%; font-size:14px; }
   .e-c1-s1,.e-c1-s2,.e-c1-s3{ top:35.5%; }
   .e-c1-star{ top:37%; }
   .e-c1-l1,.e-c1-l2,.e-c1-l3{ top:39%; font-size:11px; }
   .i-svc-family{ top:38%; }
   .e-c1-link{ top:42.5%; }
-  .e-c2-b{ width:31%; font-size:14px; }
+  .e-c2-b{ width:25.382%; font-size:14px; }
   .e-c2-s1{ top:68%; }
   .e-c2-tag{ top:69.5%; }
   .e-c2-l1{ top:71.5%; font-size:11px; }

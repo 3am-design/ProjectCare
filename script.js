@@ -258,6 +258,7 @@ document.querySelectorAll('img.photo, img.n-card__img, img.n-feat__img').forEach
     doodles.push({
       el: el, active: false, phase: i * 1.71,
       pointer: (14 + (i % 4) * 7) * (i % 2 ? -1 : 1),
+      ampX: 7 + (i % 3) * 3, ampY: 9 + (i % 4) * 3,
       px: 0, py: 0
     });
     el.classList.add('fx-bg-motion');
@@ -265,10 +266,11 @@ document.querySelectorAll('img.photo, img.n-card__img, img.n-feat__img').forEach
 
   // hero art: same lerp/pointer-follow as doodles, but a much smaller
   // amplitude since these are large full-bleed images, not small icons.
-  document.querySelectorAll('.i-hero-hand,.i-hands').forEach(function (el, i) {
+  document.querySelectorAll('.i-hero-hand,.i-hands,.i-jar').forEach(function (el, i) {
     doodles.push({
       el: el, active: false, phase: i * 1.71,
       pointer: (5 + (i % 2) * 2) * (i % 2 ? -1 : 1),
+      ampX: 3.5, ampY: 3.5,
       px: 0, py: 0
     });
     el.classList.add('fx-bg-motion');
@@ -334,8 +336,12 @@ document.querySelectorAll('img.photo, img.n-card__img, img.n-feat__img').forEach
       if (!d.active) return;
       d.px += (mx * d.pointer - d.px) * 0.14;
       d.py += (my * d.pointer - d.py) * 0.14;
-      var idle = Math.sin(now * 0.00042 + d.phase) * 3;
-      d.el.style.translate = d.px.toFixed(1) + 'px ' + (d.py + idle).toFixed(1) + 'px';
+      // gentle autonomous drift (same sine/cosine idea as the blobs, just a
+      // smaller amplitude fit for icon-sized art), layered under the
+      // cursor-follow lerp so they keep moving even with the pointer still
+      var driftX = Math.sin(now * 0.00021 + d.phase) * d.ampX;
+      var driftY = Math.cos(now * 0.00026 + d.phase) * d.ampY;
+      d.el.style.translate = (d.px + driftX).toFixed(1) + 'px ' + (d.py + driftY).toFixed(1) + 'px';
     });
   }
   requestAnimationFrame(motionFrame);
