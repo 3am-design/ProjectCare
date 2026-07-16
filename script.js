@@ -163,7 +163,10 @@ document.querySelectorAll('img.photo, img.n-card__img, img.n-feat__img').forEach
             // whole cards rise as one unit (their inner text is filtered out below)
             '.p-card, .cbox, .cmte-card, .member-card, ' +
             '.annual__cover, .annual__txt, .org-lockup, .role-label, .org-divider, ' +
-            '.chart__lines, .chome__chips, .p-unit-chip, .su-family, .s-tags, .a-tagline, .nd-wrap > *, ' +
+            // each children-home card owns its yellow panel and role chips;
+            // reveal the complete card together on both the desktop chart and
+            // mobile stacked layout instead of leaving the panel visible.
+            '.chart__lines, .chome, .p-unit-chip, .su-family, .s-tags, .a-tagline, .nd-wrap > *, ' +
             // horizontal sliders (服務發展/申請及退出手續): reveal the whole rail
             // once, never per-card — individual cards only enter the page
             // viewport as the user drags the slider, so revealing them one at
